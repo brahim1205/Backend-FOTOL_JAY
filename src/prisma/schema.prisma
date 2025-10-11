@@ -1,0 +1,361 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum RoleUtilisateur {
+  USER
+  VIP
+  PRO
+  MODERATOR
+  ADMIN
+}
+
+enum StatutProduit {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+  SOLD
+}
+
+model User {
+  id               String          @id @default(cuid())
+  email            String          @unique
+  password         String
+  role             RoleUtilisateur @default(USER)
+  reputation       Int             @default(0)
+  isVip            Boolean         @default(false)
+  registrationDate DateTime        @default(now())
+  lastLogin        DateTime?
+  phone            String?
+  firstName        String?
+  lastName         String?
+  profilePicture   String?
+  location         String?
+
+  // Relations
+  products          Product[]
+  notifications     Notification[]
+  sentMessages      ChatMessage[]      @relation("FromUser")
+  receivedMessages  ChatMessage[]      @relation("ToUser")
+  credits           Credit?
+  reviews           Review[]
+  favorites         Favorite[]
+  transactions      Transaction[]
+  buyerOrders       Order[]            @relation("BuyerOrders")
+  sellerOrders      Order[]            @relation("SellerOrders")
+  analyticsEvents   AnalyticsEvent[]
+  dashboardMetrics  DashboardMetrics[]
+  posts             Post[]
+  comments          Comment[]
+  referrerReferrals Referral[]         @relation("ReferrerReferrals")
+  referredReferrals Referral[]         @relation("ReferredReferrals")
+
+  @@map("users")
+}
+
+model Product {
+  id           String        @id @default(cuid())
+  title        String
+  description  String
+  price        Float
+  images       Json // Array of image URLs
+  status       StatutProduit @default(PENDING)
+  sellerId     String
+  views        Int           @default(0)
+  publishDate  DateTime      @default(now())
+  expiration   DateTime
+  renewalCount Int           @default(0) // Nombre de renouvellements effectués
+  location     String
+  category     String?
+  condition    String? // Neuf, Occasion, etc.
+  categoryId   String?
+  locationId   String?
+
+  // Relations
+  seller          User          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  messages        ChatMessage[]
+  reviews         Review[]
+  favorites       Favorite[]
+  orders          Order[]
+  productCategory Category?     @relation(fields: [categoryId], references: [id])
+  productLocation Location?     @relation(fields: [locationId], references: [id])
+
+  @@map("products")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String // e.g., "product_approved", "new_message"
+  payload   Json // Additional data
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model ChatMessage {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  productId  String?
+  message    String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  fromUser User     @relation("FromUser", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User     @relation("ToUser", fields: [toUserId], references: [id], onDelete: Cascade)
+  product  Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@map("chat_messages")
+}
+
+model Credit {
+  id      String @id @default(cuid())
+  userId  String @unique
+  balance Int    @default(0)
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("credits")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  userId    String
+  rating    Int // 1-5 étoiles
+  comment   String?
+  photos    Json? // Array of photo URLs for review
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, userId]) // Un avis par utilisateur par produit
+  @@map("reviews")
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  productId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, userId]) // Un favori par utilisateur par produit
+  @@map("favorites")
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String // 'purchase', 'vip_subscription', 'credit_purchase', 'commission'
+  amount      Float
+  currency    String   @default("EUR")
+  status      String   @default("pending") // 'pending', 'completed', 'failed', 'refunded'
+  description String?
+  reference   String? // ID de transaction externe (Stripe, etc.)
+  metadata    Json? // Données supplémentaires
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("transactions")
+}
+
+model Order {
+  id              String   @id @default(cuid())
+  buyerId         String
+  sellerId        String
+  productId       String
+  quantity        Int      @default(1)
+  totalAmount     Float
+  status          String   @default("pending") // 'pending', 'paid', 'shipped', 'delivered', 'cancelled'
+  shippingAddress Json? // Adresse de livraison
+  trackingNumber  String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  buyer   User    @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller  User    @relation("SellerOrders", fields: [sellerId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("orders")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  icon        String?
+  parentId    String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+  products Product[]
+  forums   Forum[]
+
+  @@map("categories")
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  name      String // Nom de la ville/région
+  latitude  Float?
+  longitude Float?
+  country   String   @default("France")
+  createdAt DateTime @default(now())
+
+  // Relations
+  products Product[]
+  forums   Forum[]
+
+  @@map("locations")
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  userId     String?
+  eventType  String // 'product_view', 'product_purchase', 'user_login', etc.
+  entityId   String? // ID du produit, utilisateur, etc.
+  entityType String? // 'product', 'user', 'category', etc.
+  metadata   Json? // Données supplémentaires
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("analytics_events")
+}
+
+model DashboardMetrics {
+  id          String   @id @default(cuid())
+  userId      String // Vendeur ou admin
+  metricType  String // 'sales', 'views', 'conversions', 'revenue'
+  period      String // 'daily', 'weekly', 'monthly'
+  periodStart DateTime
+  periodEnd   DateTime
+  value       Float
+  metadata    Json? // Données supplémentaires
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, metricType, period, periodStart])
+  @@map("dashboard_metrics")
+}
+
+model Forum {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  categoryId  String?
+  locationId  String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  // Relations
+  category Category? @relation(fields: [categoryId], references: [id])
+  location Location? @relation(fields: [locationId], references: [id])
+  posts    Post[]
+
+  @@map("forums")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  forumId   String
+  authorId  String
+  title     String
+  content   String
+  isPinned  Boolean  @default(false)
+  isLocked  Boolean  @default(false)
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  forum    Forum     @relation(fields: [forumId], references: [id], onDelete: Cascade)
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments Comment[]
+
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  authorId  String
+  content   String
+  parentId  String? // Pour les réponses imbriquées
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  post    Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author  User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies Comment[] @relation("CommentReplies")
+
+  @@map("comments")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  type        String // 'promotion', 'event', 'flash_sale'
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean  @default(true)
+  discount    Float? // Pourcentage de réduction
+  targetUsers Json? // Critères pour cibler les utilisateurs
+  metadata    Json? // Données supplémentaires
+  createdAt   DateTime @default(now())
+
+  @@map("events")
+}
+
+model Referral {
+  id          String    @id @default(cuid())
+  referrerId  String // Utilisateur qui parraine
+  referredId  String // Utilisateur parrainé
+  code        String    @unique // Code de parrainage unique
+  status      String    @default("pending") // 'pending', 'completed', 'expired'
+  rewardGiven Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  // Relations
+  referrer User @relation("ReferrerReferrals", fields: [referrerId], references: [id])
+  referred User @relation("ReferredReferrals", fields: [referredId], references: [id])
+
+  @@map("referrals")
+}
