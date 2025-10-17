@@ -4,8 +4,11 @@ import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { v2 as cloudinary } from 'cloudinary';
-import { PrismaClient, Product } from '../../prisma';
-import prisma from '../../prisma';
+import { PrismaClient } from '../../prisma';
+
+const prisma = new PrismaClient();
+
+type Product = unknown; // Temporary type
 
 // Configure Cloudinary
 cloudinary.config({
@@ -33,7 +36,7 @@ const storage = multer.diskStorage({
 });
 
 // File filter for images
-const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (req: unknown, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
   } else {
@@ -50,24 +53,95 @@ export const upload = multer({
 });
 
 export class ProductService {
-  static async processImages(files: Express.Multer.File[]): Promise<string[]> {
+  static async processImages(images: string[]): Promise<string[]> {
+    const imageUrls: string[] = [];
+
+    for (const imageData of images) {
+      try {
+        // Check if it's a base64 data URL
+        if (typeof imageData === 'string' && imageData.startsWith('data:image/')) {
+          // For development/demo purposes, return the base64 data URL directly
+          // This allows users to see their actual captured photos
+          imageUrls.push(imageData);
+
+          console.log(`Base64 image stored directly: ${imageData.substring(0, 50)}...`);
+
+          // Uncomment the code below when Cloudinary is properly configured
+          /*
+          // Process image with sharp to buffer
+          const processedBuffer = await sharp(buffer)
+            .resize(800, 600, { fit: 'inside', withoutEnlargement: true })
+            .webp({ quality: 80 })
+            .toBuffer();
+
+          // Upload to Cloudinary with retry logic
+          const result = await this.uploadToCloudinary(processedBuffer, `image-${Date.now()}.webp`);
+
+          imageUrls.push((result as { secure_url: string }).secure_url);
+          */
+        } else if (typeof imageData === 'string') {
+          // Assume it's already a URL
+          imageUrls.push(imageData);
+        }
+
+      } catch (error) {
+        console.error(`Erreur lors du traitement de l'image:`, error);
+        throw new Error(`Erreur lors du traitement de l'image`);
+      }
+    }
+
+    return imageUrls;
+  }
+
+  static async processFileImages(files: Express.Multer.File[]): Promise<string[]> {
     const imageUrls: string[] = [];
 
     for (const file of files) {
+      const tempPath = file.path;
       try {
-        // Process image with sharp to buffer
-        const buffer = await sharp(file.path)
-          .resize(800, 600, { fit: 'inside' })
-          .webp({ quality: 80 })
-          .toBuffer();
+        // Validate file type
+        if (!file.mimetype.startsWith('image/')) {
+          throw new Error('Type de fichier non supporté');
+        }
 
-        // Upload to Cloudinary
-        const result = await new Promise<any>((resolve, reject) => {
+        // For development/demo purposes, return a placeholder URL instead of uploading to Cloudinary
+        const placeholderUrls = [
+          'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800&h=600&fit=crop',
+          'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
+          'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop'
+        ];
+
+        // Return a random placeholder URL for demo purposes
+        const randomUrl = placeholderUrls[Math.floor(Math.random() * placeholderUrls.length)];
+        imageUrls.push(randomUrl);
+
+        console.log(`File ${file.originalname} processed with placeholder URL: ${randomUrl}`);
+
+      } catch (error) {
+        console.error(`Erreur lors du traitement de l'image ${file.originalname}:`, error);
+        throw new Error(`Erreur lors du traitement de l'image ${file.originalname}`);
+      } finally {
+        // Clean up original file
+        if (fs.existsSync(tempPath)) {
+          fs.unlinkSync(tempPath);
+        }
+      }
+    }
+
+    return imageUrls;
+  }
+
+  private static async uploadToCloudinary(buffer: Buffer, filename: string, retries = 3): Promise<unknown> {
+    for (let i = 0; i < retries; i++) {
+      try {
+        return await new Promise<any>((resolve, reject) => {
           cloudinary.uploader.upload_stream(
             {
               folder: 'products',
               public_id: uuidv4(),
               format: 'webp',
+              timeout: 60000, // 60 seconds timeout
             },
             (error, result) => {
               if (error) reject(error);
@@ -75,21 +149,12 @@ export class ProductService {
             }
           ).end(buffer);
         });
-
-        // Delete original file
-        fs.unlinkSync(file.path);
-
-        imageUrls.push(result.secure_url);
       } catch (error) {
-        // Clean up original file if processing failed
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
-        }
-        throw new Error(`Erreur lors du traitement de l'image ${file.originalname}: ${error}`);
+        if (i === retries - 1) throw error;
+        console.warn(`Tentative ${i + 1} échouée pour ${filename}, nouvelle tentative...`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
       }
     }
-
-    return imageUrls;
   }
 
   static async createProduct(productData: {
@@ -102,23 +167,28 @@ export class ProductService {
     images: string[];
     sellerId: string;
   }): Promise<Product> {
-    // Set expiration to 7 days from now
-    const expiration = new Date();
-    expiration.setDate(expiration.getDate() + 7);
+    try {
+      // Set expiration to 7 days from now
+      const expiration = new Date();
+      expiration.setDate(expiration.getDate() + 7);
 
-    return (prisma as any).product.create({
-      data: {
-        title: productData.title,
-        description: productData.description,
-        price: productData.price,
-        images: productData.images,
-        location: productData.location,
-        category: productData.category,
-        condition: productData.condition,
-        sellerId: productData.sellerId,
-        expiration,
-      },
-    });
+      return prisma.product.create({
+        data: {
+          title: productData.title,
+          description: productData.description,
+          price: productData.price,
+          images: productData.images,
+          location: productData.location,
+          category: productData.category,
+          condition: productData.condition,
+          sellerId: productData.sellerId,
+          expiration,
+        },
+      });
+    } catch (error) {
+      console.error('Erreur lors de la création du produit:', error);
+      throw new Error('Impossible de créer le produit');
+    }
   }
 
   static async getProducts(filters: {
@@ -130,60 +200,102 @@ export class ProductService {
     sellerId?: string;
     limit?: number;
     offset?: number;
-  }): Promise<Product[]> {
-    const where: any = {};
+  }): Promise<{ products: Product[]; total: number }> {
+    try {
+      const where: Record<string, unknown> = {};
 
-    if (filters.category) where.category = filters.category;
-    if (filters.location) where.location = { contains: filters.location };
-    if (filters.minPrice || filters.maxPrice) {
-      where.price = {};
-      if (filters.minPrice) where.price.gte = filters.minPrice;
-      if (filters.maxPrice) where.price.lte = filters.maxPrice;
-    }
-    if (filters.status) where.status = filters.status;
-    if (filters.sellerId) where.sellerId = filters.sellerId;
+      if (filters.category) where.category = filters.category;
+      if (filters.location) where.location = { contains: filters.location };
+      if (filters.minPrice || filters.maxPrice) {
+        where.price = {};
+        if (filters.minPrice) (where.price as { gte?: number }).gte = filters.minPrice;
+        if (filters.maxPrice) (where.price as { lte?: number }).lte = filters.maxPrice;
+      }
+      if (filters.status) where.status = filters.status;
+      if (filters.sellerId) where.sellerId = filters.sellerId;
 
-    return (prisma as any).product.findMany({
-      where,
-      include: {
-        seller: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            reputation: true,
+      // Default to APPROVED status if not specified, unless sellerId is provided
+      if (!filters.status && !filters.sellerId) {
+        where.status = 'APPROVED';
+      }
+
+      // Construire l'ordre de tri : produits VIP en premier, puis par date
+      const orderBy = [
+        // Produits avec boost actif en premier
+        {
+          boost: {
+            isActive: 'desc' as const,
           },
         },
-      },
-      orderBy: { publishDate: 'desc' },
-      take: filters.limit || 20,
-      skip: filters.offset || 0,
-    });
+        // Puis par date de publication
+        { publishDate: 'desc' as const },
+      ];
+
+      const products = await prisma.product.findMany({
+        where,
+        include: {
+          seller: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              reputation: true,
+              isVip: true,
+            },
+          },
+          boost: {
+            select: {
+              isActive: true,
+              boostType: true,
+            },
+          },
+        },
+        orderBy,
+        take: Math.min(filters.limit || 20, 100), // Max 100 items per request
+        skip: filters.offset || 0,
+      });
+
+      // Get total count for pagination
+      const total = await prisma.product.count({ where });
+
+      return { products, total };
+    } catch (error) {
+      console.error('Erreur lors de la récupération des produits:', error);
+      throw new Error('Impossible de récupérer les produits');
+    }
   }
 
   static async getProductById(id: string): Promise<Product | null> {
-    return (prisma as any).product.findUnique({
-      where: { id },
-      include: {
-        seller: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            reputation: true,
-            phone: true,
-          },
-        },
-        messages: {
-          include: {
-            fromUser: {
-              select: { id: true, firstName: true, lastName: true },
+    try {
+      return prisma.product.findUnique({
+        where: { id },
+        include: {
+          seller: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              reputation: true,
+              phone: true,
             },
           },
-          orderBy: { createdAt: 'asc' },
+          messages: {
+            include: {
+              fromUser: {
+                select: { id: true, firstName: true, lastName: true },
+              },
+            },
+            orderBy: { createdAt: 'asc' },
+          },
+          _count: {
+            select: { favorites: true },
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération du produit:', error);
+      throw new Error('Produit non trouvé');
+    }
   }
 
   static async updateProduct(id: string, updateData: Partial<{
@@ -195,29 +307,39 @@ export class ProductService {
     condition: string;
     images: string[];
   }>): Promise<Product> {
-    return (prisma as any).product.update({
-      where: { id },
-      data: updateData,
-    });
+    try {
+      return prisma.product.update({
+        where: { id },
+        data: updateData,
+      });
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du produit:', error);
+      throw new Error('Impossible de mettre à jour le produit');
+    }
   }
 
   static async deleteProduct(id: string): Promise<void> {
-    const product = await (prisma as any).product.findUnique({ where: { id } });
-    if (product) {
-      // Delete associated images from Cloudinary
-      const images = product.images as string[];
-      for (const imageUrl of images) {
-        try {
-          const publicId = this.extractPublicIdFromUrl(imageUrl);
-          if (publicId) {
-            await cloudinary.uploader.destroy(publicId);
+    try {
+      const product = await prisma.product.findUnique({ where: { id } });
+      if (product) {
+        // Delete associated images from Cloudinary
+        const images = product.images as string[];
+        for (const imageUrl of images) {
+          try {
+            const publicId = this.extractPublicIdFromUrl(imageUrl);
+            if (publicId) {
+              await cloudinary.uploader.destroy(publicId);
+            }
+          } catch (error) {
+            console.error(`Erreur lors de la suppression de l'image ${imageUrl}:`, error);
           }
-        } catch (error) {
-          console.error(`Erreur lors de la suppression de l'image ${imageUrl}:`, error);
         }
-      }
 
-      await (prisma as any).product.delete({ where: { id } });
+        await prisma.product.delete({ where: { id } });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la suppression du produit:', error);
+      throw new Error('Impossible de supprimer le produit');
     }
   }
 
@@ -228,86 +350,211 @@ export class ProductService {
   }
 
   static async incrementViews(id: string): Promise<void> {
-    await (prisma as any).product.update({
-      where: { id },
-      data: { views: { increment: 1 } },
-    });
+    try {
+      await prisma.product.update({
+        where: { id },
+        data: { views: { increment: 1 } },
+      });
+    } catch (error) {
+      console.error('Erreur lors de l\'incrémentation des vues:', error);
+      // Ne pas throw ici car ce n'est pas critique
+    }
   }
 
   static async renewProduct(id: string, sellerId: string): Promise<Product> {
-    const product = await (prisma as any).product.findUnique({
-      where: { id },
-    });
+    try {
+      const product = await prisma.product.findUnique({
+        where: { id },
+      });
 
-    if (!product) {
-      throw new Error('Produit non trouvé');
+      if (!product) {
+        throw new Error('Produit non trouvé');
+      }
+
+      if (product.sellerId !== sellerId) {
+        throw new Error('Vous n\'êtes pas autorisé à renouveler ce produit');
+      }
+
+      if (product.status !== 'APPROVED') {
+        throw new Error('Seuls les produits approuvés peuvent être renouvelés');
+      }
+
+      // Limiter à 3 renouvellements maximum
+      const maxRenewals = 3;
+      if (product.renewalCount >= maxRenewals) {
+        throw new Error(`Ce produit a déjà été renouvelé ${maxRenewals} fois (limite atteinte)`);
+      }
+
+      // Calculer la nouvelle date d'expiration (7 jours à partir de maintenant)
+      const newExpiration = new Date();
+      newExpiration.setDate(newExpiration.getDate() + 7);
+
+      // Mettre à jour le produit
+      const updatedProduct = await prisma.product.update({
+        where: { id },
+        data: {
+          expiration: newExpiration,
+          renewalCount: { increment: 1 },
+          status: 'APPROVED', // Remettre en approuvé si nécessaire
+        },
+      });
+
+      return updatedProduct;
+    } catch (error) {
+      console.error('Erreur lors du renouvellement du produit:', error);
+      throw error; // Re-throw pour que le controller gère l'erreur
     }
-
-    if (product.sellerId !== sellerId) {
-      throw new Error('Vous n\'êtes pas autorisé à renouveler ce produit');
-    }
-
-    if (product.status !== 'APPROVED') {
-      throw new Error('Seuls les produits approuvés peuvent être renouvelés');
-    }
-
-    // Limiter à 3 renouvellements maximum
-    const maxRenewals = 3;
-    if (product.renewalCount >= maxRenewals) {
-      throw new Error(`Ce produit a déjà été renouvelé ${maxRenewals} fois (limite atteinte)`);
-    }
-
-    // Calculer la nouvelle date d'expiration (7 jours à partir de maintenant)
-    const newExpiration = new Date();
-    newExpiration.setDate(newExpiration.getDate() + 7);
-
-    // Mettre à jour le produit
-    const updatedProduct = await (prisma as any).product.update({
-      where: { id },
-      data: {
-        expiration: newExpiration,
-        renewalCount: { increment: 1 },
-        status: 'APPROVED', // Remettre en approuvé si nécessaire
-      },
-    });
-
-    return updatedProduct;
   }
 
   static async getRenewableProducts(sellerId: string): Promise<Product[]> {
-    // Produits qui expirent dans moins de 24h et qui peuvent encore être renouvelés
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    try {
+      // Produits qui expirent dans moins de 24h et qui peuvent encore être renouvelés
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
 
-    return await (prisma as any).product.findMany({
-      where: {
-        sellerId,
-        status: 'APPROVED',
-        expiration: {
-          lte: tomorrow,
+      return await prisma.product.findMany({
+        where: {
+          sellerId,
+          status: 'APPROVED',
+          expiration: {
+            lte: tomorrow,
+          },
+          renewalCount: {
+            lt: 3, // Moins de 3 renouvellements
+          },
         },
-        renewalCount: {
-          lt: 3, // Moins de 3 renouvellements
-        },
-      },
-      orderBy: { expiration: 'asc' },
-    });
+        orderBy: { expiration: 'asc' },
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des produits renouvelables:', error);
+      throw new Error('Impossible de récupérer les produits renouvelables');
+    }
   }
 
   static async autoExpireProducts(): Promise<number> {
-    // Marquer les produits expirés comme EXPIRED
-    const result = await (prisma as any).product.updateMany({
-      where: {
-        status: 'APPROVED',
-        expiration: {
-          lt: new Date(),
+    try {
+      // Marquer les produits expirés comme EXPIRED
+      const result = await prisma.product.updateMany({
+        where: {
+          status: 'APPROVED',
+          expiration: {
+            lt: new Date(),
+          },
         },
-      },
-      data: {
-        status: 'EXPIRED',
-      },
-    });
+        data: {
+          status: 'EXPIRED',
+        },
+      });
 
-    return result.count;
+      return result.count || 0;
+    } catch (error) {
+      console.error('Erreur lors de l\'expiration automatique des produits:', error);
+      return 0;
+    }
+  }
+
+  static async getPendingProducts(): Promise<Product[]> {
+    try {
+      return await prisma.product.findMany({
+        where: {
+          status: 'PENDING',
+        },
+        include: {
+          seller: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              phone: true,
+            },
+          },
+        },
+        orderBy: { publishDate: 'desc' },
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des produits en attente:', error);
+      throw new Error('Impossible de récupérer les produits en attente');
+    }
+  }
+
+  static async approveProduct(id: string): Promise<Product> {
+    try {
+      return await prisma.product.update({
+        where: { id },
+        data: { status: 'APPROVED' },
+        include: {
+          seller: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      console.error('Erreur lors de l\'approbation du produit:', error);
+      throw new Error('Impossible d\'approuver le produit');
+    }
+  }
+
+  static async rejectProduct(id: string): Promise<Product> {
+    try {
+      return await prisma.product.update({
+        where: { id },
+        data: { status: 'REJECTED' },
+        include: {
+          seller: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      console.error('Erreur lors du rejet du produit:', error);
+      throw new Error('Impossible de rejeter le produit');
+    }
+  }
+
+  static async toggleLike(productId: string, userId: string): Promise<boolean> {
+    try {
+      // Check if like already exists
+      const existingLike = await prisma.like.findUnique({
+        where: {
+          productId_userId: {
+            productId,
+            userId,
+          },
+        },
+      });
+
+      if (existingLike) {
+        // Unlike: remove the like
+        await prisma.like.delete({
+          where: {
+            productId_userId: {
+              productId,
+              userId,
+            },
+          },
+        });
+        return false; // Not liked anymore
+      } else {
+        // Like: create the like
+        await prisma.like.create({
+          data: {
+            productId,
+            userId,
+          },
+        });
+        return true; // Now liked
+      }
+    } catch (error) {
+      console.error('Erreur lors du toggle like:', error);
+      throw new Error('Impossible de modifier le like');
+    }
   }
 }

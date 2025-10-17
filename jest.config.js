@@ -7,11 +7,12 @@ module.exports = {
     '^.+\\.ts$': 'ts-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(uuid|@prisma|prisma)/)',
+    'node_modules/(?!uuid|cloudinary|@prisma/)',
   ],
   moduleNameMapper: {
-    '^uuid$': require.resolve('uuid'),
-    '^@prisma/client$': require.resolve('@prisma/client'),
+    '^uuid$': 'uuid',
+    '^@prisma/client$': '@prisma/client',
+    '^cloudinary$': 'cloudinary',
   },
   collectCoverageFrom: [
     'src/**/*.ts',
@@ -21,4 +22,11 @@ module.exports = {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  testTimeout: 10000,
+  forceExit: true,
+  detectOpenHandles: true,
+  maxWorkers: 1,
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  testRunner: 'jest-circus',
 };

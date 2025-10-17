@@ -142,4 +142,43 @@ router.delete('/:id', authenticateToken, NotificationController.deleteNotificati
  */
 router.post('/send', authenticateToken, authorizeRoles('ADMIN', 'MODERATOR'), NotificationController.sendNotification);
 
+/**
+ * @swagger
+ * /notifications/fcm-token:
+ *   post:
+ *     summary: Mettre à jour le token FCM
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fcmToken
+ *             properties:
+ *               fcmToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Token FCM mis à jour
+ */
+router.post('/fcm-token', authenticateToken, NotificationController.updateFCMToken);
+
+/**
+ * @swagger
+ * /notifications/fcm-token:
+ *   delete:
+ *     summary: Supprimer le token FCM
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Token FCM supprimé
+ */
+router.delete('/fcm-token', authenticateToken, NotificationController.removeFCMToken);
+
 export default router;

@@ -1,4 +1,4 @@
-const { PrismaClient } = require('./index.js');
+import { PrismaClient } from './index.js';
 
 const prisma = new PrismaClient({
   log: ['query', 'info', 'warn', 'error'],

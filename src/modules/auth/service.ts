@@ -1,14 +1,29 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import prisma from '../../prisma';
-import { User } from '../../prisma';
+import { PrismaClient } from '../../prisma';
 
-const JWT_SECRET = process.env.JWT_SECRET!;
-const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET!;
+const prisma = new PrismaClient();
+
+interface AuthUser {
+  id: string;
+  email: string;
+  password: string;
+  role: string;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+}
+
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-jwt-secret-for-development';
+const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET || 'fallback-refresh-secret-for-development';
 
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
+}
+
+export interface UserWithTokens extends AuthUser {
+  tokens: AuthTokens;
 }
 
 export class AuthService {
@@ -20,7 +35,7 @@ export class AuthService {
     return bcrypt.compare(password, hash);
   }
 
-  static generateTokens(user: User): AuthTokens {
+  static generateTokens(user: AuthUser): AuthTokens {
     const accessToken = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       JWT_SECRET,
@@ -55,11 +70,12 @@ export class AuthService {
   static async register(userData: {
     email: string;
     password: string;
-    firstName: string;
-    lastName: string;
+    firstName?: string;
+    lastName?: string;
     phone?: string;
-  }): Promise<User & { tokens: AuthTokens }> {
-    const existingUser = await (prisma as any).user.findUnique({
+    role?: string;
+  }): Promise<UserWithTokens> {
+    const existingUser = await prisma.user.findUnique({
       where: { email: userData.email },
     });
 
@@ -69,17 +85,44 @@ export class AuthService {
 
     const hashedPassword = await this.hashPassword(userData.password);
 
-    // Set role to ADMIN if email contains 'admin'
-    const role = userData.email.includes('admin') ? 'ADMIN' : 'USER';
+    // Set role based on frontend selection (passed from signup form)
+    let role: string = 'USER';
+    if (userData.role) {
+      // Normalize role to uppercase and map frontend values to backend enum
+      const normalizedRole = userData.role.toUpperCase();
+      console.log('Role received from frontend:', userData.role);
+      console.log('Normalized role:', normalizedRole);
 
-    const user = await (prisma as any).user.create({
+      if (normalizedRole === 'VENDEUR') {
+        role = 'VENDEUR';
+        console.log('Setting role to VENDEUR');
+      } else if (normalizedRole === 'VIP') {
+        role = 'VIP';
+        console.log('Setting role to VIP');
+      } else if (normalizedRole === 'ADMIN') {
+        role = 'ADMIN';
+        console.log('Setting role to ADMIN');
+      } else if (normalizedRole === 'MODERATOR') {
+        role = 'MODERATOR';
+        console.log('Setting role to MODERATOR');
+      } else if (normalizedRole === 'PRO') {
+        role = 'PRO';
+        console.log('Setting role to PRO');
+      } else {
+        role = 'USER';
+        console.log('Setting role to USER (default)');
+      }
+    }
+    console.log('Final role to be saved:', role);
+
+    const user = await prisma.user.create({
       data: {
         email: userData.email,
         password: hashedPassword,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        phone: userData.phone,
-        role: role,
+        firstName: userData.firstName || null,
+        lastName: userData.lastName || null,
+        phone: userData.phone || null,
+        role: role as any,
       },
     });
 
@@ -88,8 +131,8 @@ export class AuthService {
     return { ...user, tokens };
   }
 
-  static async login(email: string, password: string): Promise<User & { tokens: AuthTokens }> {
-    const user = await (prisma as any).user.findUnique({
+  static async login(email: string, password: string): Promise<UserWithTokens> {
+    const user = await prisma.user.findUnique({
       where: { email },
     });
 
@@ -98,12 +141,13 @@ export class AuthService {
     }
 
     const isValidPassword = await this.verifyPassword(password, user.password);
+
     if (!isValidPassword) {
       throw new Error('Email ou mot de passe incorrect');
     }
 
     // Update last login
-    await (prisma as any).user.update({
+    await prisma.user.update({
       where: { id: user.id },
       data: { lastLogin: new Date() },
     });
@@ -116,7 +160,7 @@ export class AuthService {
   static async refreshAccessToken(refreshToken: string): Promise<AuthTokens> {
     const payload = this.verifyRefreshToken(refreshToken);
 
-    const user = await (prisma as any).user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: payload.userId },
     });
 
@@ -128,7 +172,7 @@ export class AuthService {
   }
 
   static async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<void> {
-    const user = await (prisma as any).user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: userId },
     });
 
@@ -143,7 +187,7 @@ export class AuthService {
 
     const hashedNewPassword = await this.hashPassword(newPassword);
 
-    await (prisma as any).user.update({
+    await prisma.user.update({
       where: { id: userId },
       data: { password: hashedNewPassword },
     });

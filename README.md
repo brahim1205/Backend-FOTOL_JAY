@@ -10,7 +10,7 @@ Backend API pour l'application FOTOL JAY - Plateforme de vente de produits d'occ
 - **Messagerie temps réel** via Socket.io
 - **Système VIP** avec priorité d'affichage
 - **Gestion des crédits** pour boosts et options
-- **Notifications push** via Firebase
+- **Notifications push** (désactivées)
 - **API REST** documentée avec Swagger
 - **Cache Redis** pour les performances
 - **Logs** avec Winston
@@ -21,20 +21,24 @@ Backend API pour l'application FOTOL JAY - Plateforme de vente de produits d'occ
 - **Node.js** v18+
 - **TypeScript**
 - **Express.js**
-- **Prisma ORM** (MySQL)
+- **Prisma ORM** (SQLite pour dev, MySQL pour prod)
 - **Zod** (Validation)
 - **JWT** (Authentification)
 - **Socket.io** (Temps réel)
 - **Multer + Sharp** (Upload images)
 - **Redis** (Cache)
-- **Firebase Admin** (Notifications push)
+- **Firebase Admin** (supprimé)
+- **PayDunya** (Paiements)
+- **Winston** (Logs)
+- **Helmet, CORS, Rate Limiting** (Sécurité)
 
 ## 📋 Prérequis
 
 - Node.js v18+
-- MySQL 8.0+
+- SQLite (pour développement) ou MySQL 8.0+ (pour production)
 - Redis (optionnel pour le cache)
-- Firebase project (pour les notifications)
+- Firebase project (supprimé)
+- PayDunya account (pour les paiements)
 
 ## 🔧 Installation
 
@@ -53,13 +57,14 @@ Backend API pour l'application FOTOL JAY - Plateforme de vente de produits d'occ
    - Copier `.env.example` vers `.env`
    - Configurer les variables d'environnement :
      ```env
-     DATABASE_URL="mysql://username:password@localhost:3306/fotoljay_db"
+     DATABASE_URL="file:./dev.db"  # SQLite pour dev, ou mysql://... pour prod
      JWT_SECRET="your-super-secret-jwt-key"
      REFRESH_TOKEN_SECRET="your-refresh-token-secret"
      REDIS_URL="redis://localhost:6379"
-     FIREBASE_PROJECT_ID="your-firebase-project-id"
-     FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-     FIREBASE_CLIENT_EMAIL="firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com"
+     # Firebase supprimé - notifications push désactivées
+     PAYDUNYA_MASTER_KEY="your-paydunya-master-key"
+     PAYDUNYA_PRIVATE_KEY="your-paydunya-private-key"
+     PAYDUNYA_TOKEN="your-paydunya-token"
      UPLOAD_PATH="./uploads"
      NODE_ENV="development"
      ```
@@ -98,19 +103,21 @@ http://localhost:5000/api-docs
 ```
 src/
 ├── modules/
-│   ├── auth/          # Authentification et autorisation
-│   ├── users/         # Gestion des utilisateurs
-│   ├── products/      # CRUD des produits
-│   ├── notifications/ # Notifications push et internes
 │   ├── admin/         # Tableau de bord admin
+│   ├── analytics/     # Analyses et métriques
+│   ├── auth/          # Authentification et autorisation
 │   ├── chat/          # Messagerie temps réel
-│   ├── vip/           # Système VIP
-│   └── credits/       # Gestion des crédits
-├── middlewares/       # Middlewares personnalisés
-├── services/          # Services métier
-├── utils/             # Utilitaires
-├── jobs/              # Tâches planifiées
-├── prisma/            # Client Prisma
+│   ├── credits/       # Gestion des crédits
+│   ├── events/        # Événements promotionnels
+│   ├── forums/        # Système de forums
+│   ├── notifications/ # Notifications push et internes
+│   ├── payments/      # Paiements (PayDunya)
+│   ├── products/      # CRUD des produits
+│   ├── referrals/     # Système de parrainage
+│   ├── users/         # Gestion des utilisateurs
+│   └── vip/           # Système VIP
+├── services/          # Services transversaux (Redis, etc.)
+├── prisma/            # Client Prisma et schéma DB
 ├── app.ts             # Configuration Express
 └── server.ts          # Point d'entrée serveur
 ```
@@ -143,6 +150,22 @@ L'API utilise JWT pour l'authentification. Les tokens sont requis pour la plupar
 ### Messagerie
 - WebSocket sur `/socket.io`
 - Événements : `sendMessage`, `newMessage`, `typing`
+
+### Crédits & VIP
+- `GET /api/credits/balance` - Solde crédits
+- `POST /api/credits/purchase` - Acheter des crédits
+- `GET /api/vip/status` - Statut VIP
+- `POST /api/vip/subscribe` - S'abonner VIP
+
+### Administration
+- `GET /api/admin/stats` - Statistiques globales
+- `GET /api/admin/users` - Gestion utilisateurs
+- `GET /api/admin/products/pending` - Produits en attente
+- `PUT /api/admin/products/:id/approve` - Approuver produit
+
+### Paiements
+- `POST /api/payments/initiate` - Initier paiement PayDunya
+- `GET /api/payments/verify/:token` - Vérifier paiement
 
 ## 🧪 Tests
 

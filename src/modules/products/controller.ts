@@ -10,8 +10,12 @@ export class ProductController {
       const sellerId = req.user!.userId;
 
       let imageUrls: string[] = [];
-      if (req.files && Array.isArray(req.files)) {
-        imageUrls = await ProductService.processImages(req.files);
+      if (req.body.images && Array.isArray(req.body.images)) {
+        // Handle base64 images from frontend
+        imageUrls = await ProductService.processImages(req.body.images);
+      } else if (req.files && Array.isArray(req.files)) {
+        // Handle file uploads (fallback)
+        imageUrls = await ProductService.processFileImages(req.files);
       }
 
       const product = await ProductService.createProduct({
@@ -25,6 +29,7 @@ export class ProductController {
         product,
       });
     } catch (error: any) {
+      console.error('Erreur dans createProduct:', error);
       if (error.name === 'ZodError') {
         return res.status(400).json({ message: 'Données invalides', errors: error.errors });
       }
@@ -48,7 +53,8 @@ export class ProductController {
       const products = await ProductService.getProducts(filters);
       res.json({ products });
     } catch (error: any) {
-      res.status(500).json({ message: 'Erreur serveur' });
+      console.error('Erreur dans getProducts:', error);
+      res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }
   }
 
@@ -83,7 +89,7 @@ export class ProductController {
         return res.status(404).json({ message: 'Produit non trouvé' });
       }
 
-      if (product.sellerId !== req.user!.userId) {
+      if ((product as { sellerId: string }).sellerId !== req.user!.userId) {
         return res.status(403).json({ message: 'Accès non autorisé' });
       }
 
@@ -109,7 +115,7 @@ export class ProductController {
         return res.status(404).json({ message: 'Produit non trouvé' });
       }
 
-      if (product.sellerId !== req.user!.userId) {
+      if ((product as { sellerId: string }).sellerId !== req.user!.userId) {
         return res.status(403).json({ message: 'Accès non autorisé' });
       }
 
@@ -165,6 +171,80 @@ export class ProductController {
       });
     } catch (error: any) {
       res.status(500).json({ message: 'Erreur serveur' });
+    }
+  }
+
+  static async getPendingProducts(req: AuthRequest, res: Response) {
+    try {
+      // Vérifier que l'utilisateur est admin
+      if (req.user!.role !== 'ADMIN') {
+        return res.status(403).json({ message: 'Accès non autorisé' });
+      }
+
+      const products = await ProductService.getPendingProducts();
+      res.json({ products });
+    } catch (error: any) {
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  }
+
+  static async approveProduct(req: AuthRequest, res: Response) {
+    try {
+      // Vérifier que l'utilisateur est admin
+      if (req.user!.role !== 'ADMIN') {
+        return res.status(403).json({ message: 'Accès non autorisé' });
+      }
+
+      const { id } = productIdSchema.parse(req.params);
+      const product = await ProductService.approveProduct(id);
+      res.json({
+        message: 'Produit approuvé avec succès',
+        product,
+      });
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ message: 'ID invalide' });
+      }
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  static async rejectProduct(req: AuthRequest, res: Response) {
+    try {
+      // Vérifier que l'utilisateur est admin
+      if (req.user!.role !== 'ADMIN') {
+        return res.status(403).json({ message: 'Accès non autorisé' });
+      }
+
+      const { id } = productIdSchema.parse(req.params);
+      const product = await ProductService.rejectProduct(id);
+      res.json({
+        message: 'Produit rejeté avec succès',
+        product,
+      });
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ message: 'ID invalide' });
+      }
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  static async toggleLike(req: AuthRequest, res: Response) {
+    try {
+      const { id } = productIdSchema.parse(req.params);
+      const userId = req.user!.userId;
+
+      const result = await ProductService.toggleLike(id, userId);
+      res.json({
+        message: 'Like toggled successfully',
+        liked: result,
+      });
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ message: 'ID invalide' });
+      }
+      res.status(500).json({ message: error.message });
     }
   }
 }

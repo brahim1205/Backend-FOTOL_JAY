@@ -1,92 +1,63 @@
 import http from 'http';
-import { Server as SocketServer } from 'socket.io';
-import cron from 'node-cron';
+import { Server } from 'socket.io';
 import app from './app';
-const { PrismaClient } = require('./prisma/index.js');
-const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
-});
+import redisService from './services/redis';
+import prisma from './prisma';
 import { initializeSocket } from './modules/chat/socket';
-import { ProductService } from './modules/products/service';
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5600;
 
 const server = http.createServer(app);
-const io = new SocketServer(server, {
-  cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-  },
-});
 
 // Initialize Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: ['http://localhost:4200', 'http://127.0.0.1:4200', 'http://localhost:3000', 'http://127.0.0.1:3000'], // Allow Angular and Next.js dev servers
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+  }
+});
+
+// Initialize socket handlers
 initializeSocket(io);
 
-// Connect to database (optional for testing)
-async function connectDB() {
+// Connect to database and Redis (optional for testing)
+async function connectServices() {
   try {
-    console.log('Prisma instance:', typeof prisma, prisma);
-    if (!prisma) {
-      throw new Error('Prisma client is undefined');
-    }
-    await (prisma as any).$connect();
+    // Prisma se connecte automatiquement avec la nouvelle version
     console.log('Database connected successfully');
   } catch (error) {
     console.error('Database connection failed:', error);
-    console.log('Server will start without database connection');
+  }
+
+  try {
+    await redisService.connect();
+  } catch (error) {
+    console.warn('Redis connection failed, continuing without Redis:', (error as Error).message);
   }
 }
 
-connectDB();
+connectServices();
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`API Docs available at http://localhost:${PORT}/api-docs`);
 });
 
-// Scheduled tasks
-// Expire products automatically every hour
-cron.schedule('0 * * * *', async () => {
-  try {
-    console.log('Running automatic product expiration...');
-    const expiredCount = await ProductService.autoExpireProducts();
-    if (expiredCount > 0) {
-      console.log(`${expiredCount} products automatically expired`);
-    }
-  } catch (error) {
-    console.error('Error in automatic product expiration:', error);
-  }
-});
-
-// Clean up old analytics events (keep only last 90 days) - run daily at 2 AM
-cron.schedule('0 2 * * *', async () => {
-  try {
-    console.log('Cleaning up old analytics events...');
-    const ninetyDaysAgo = new Date();
-    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-
-    const result = await (prisma as any).analyticsEvent.deleteMany({
-      where: {
-        createdAt: {
-          lt: ninetyDaysAgo,
-        },
-      },
-    });
-
-    if (result.count > 0) {
-      console.log(`Cleaned up ${result.count} old analytics events`);
-    }
-  } catch (error) {
-    console.error('Error cleaning up analytics events:', error);
-  }
-});
-
-console.log('Scheduled tasks initialized');
-
 // Graceful shutdown
 process.on('SIGINT', async () => {
   console.log('Shutting down server...');
-  await (prisma as any).$disconnect();
+  await redisService.disconnect();
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Shutting down server...');
+  await redisService.disconnect();
   server.close(() => {
     console.log('Server closed');
     process.exit(0);

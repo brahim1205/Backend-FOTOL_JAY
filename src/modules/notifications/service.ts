@@ -1,29 +1,6 @@
-import admin from 'firebase-admin';
 import prisma from '../../prisma';
 
-// Initialize Firebase Admin SDK (optional)
-let firebaseInitialized = false;
-try {
-  if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
-    const firebaseConfig = {
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    };
-
-    if (!admin.apps.length) {
-      admin.initializeApp({
-        credential: admin.credential.cert(firebaseConfig),
-      });
-      firebaseInitialized = true;
-      console.log('Firebase initialized successfully');
-    }
-  } else {
-    console.log('Firebase not configured - push notifications disabled');
-  }
-} catch (error) {
-  console.log('Firebase initialization failed - push notifications disabled:', (error as Error).message);
-}
+// Firebase functionality removed - push notifications disabled
 
 export interface NotificationPayload {
   title: string;
@@ -44,40 +21,9 @@ export class NotificationService {
   }
 
   static async sendPushNotification(userId: string, notification: NotificationPayload): Promise<void> {
-    if (!firebaseInitialized) {
-      console.log(`Firebase not initialized - skipping push notification for user ${userId}`);
-      return;
-    }
-
-    try {
-      // Get user's FCM token (you'd store this in user table)
-      const user = await (prisma as any).user.findUnique({
-        where: { id: userId },
-        select: { fcmToken: true }, // You'd need to add this field
-      });
-
-      if (!user?.fcmToken) {
-        console.log(`No FCM token for user ${userId}`);
-        return;
-      }
-
-      const message = {
-        token: user.fcmToken,
-        notification: {
-          title: notification.title,
-          body: notification.message,
-        },
-        data: {
-          type: notification.type,
-          ...notification.data,
-        },
-      };
-
-      await admin.messaging().send(message);
-      console.log(`Push notification sent to user ${userId}`);
-    } catch (error) {
-      console.error('Error sending push notification:', error);
-    }
+    // Push notifications disabled - Firebase removed
+    console.log(`Push notifications disabled - skipping push notification for user ${userId}`);
+    return;
   }
 
   static async getUserNotifications(userId: string, filters: {

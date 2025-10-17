@@ -8,11 +8,11 @@ export const updateProfileSchema = z.object({
 });
 
 export const userIdSchema = z.object({
-  id: z.string().cuid('ID utilisateur invalide'),
+  id: z.string().regex(/^cm[a-z0-9]{20,}$/, 'ID utilisateur invalide'),
 });
 
 export const reportUserSchema = z.object({
-  reportedUserId: z.string().cuid('ID utilisateur invalide'),
+  reportedUserId: z.string().regex(/^cm[a-z0-9]{20,}$/, 'ID utilisateur invalide'),
   reason: z.string().min(10, 'Raison trop courte').max(500, 'Raison trop longue'),
   description: z.string().optional(),
 });

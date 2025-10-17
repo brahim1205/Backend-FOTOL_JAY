@@ -114,9 +114,6 @@ Prisma.NullTypes = {
  */
 
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
-  ReadUncommitted: 'ReadUncommitted',
-  ReadCommitted: 'ReadCommitted',
-  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -133,7 +130,15 @@ exports.Prisma.UserScalarFieldEnum = {
   firstName: 'firstName',
   lastName: 'lastName',
   profilePicture: 'profilePicture',
-  location: 'location'
+  location: 'location',
+  fcmToken: 'fcmToken',
+  emailVerified: 'emailVerified',
+  emailToken: 'emailToken',
+  resetToken: 'resetToken',
+  resetExpires: 'resetExpires',
+  lastLoginIP: 'lastLoginIP',
+  loginAttempts: 'loginAttempts',
+  lockedUntil: 'lockedUntil'
 };
 
 exports.Prisma.ProductScalarFieldEnum = {
@@ -191,6 +196,13 @@ exports.Prisma.ReviewScalarFieldEnum = {
 };
 
 exports.Prisma.FavoriteScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LikeScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
   userId: 'userId',
@@ -327,6 +339,117 @@ exports.Prisma.ReferralScalarFieldEnum = {
   completedAt: 'completedAt'
 };
 
+exports.Prisma.CreditTransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  amount: 'amount',
+  description: 'description',
+  reference: 'reference',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.VipSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  plan: 'plan',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  isActive: 'isActive',
+  autoRenew: 'autoRenew',
+  paymentRef: 'paymentRef',
+  cancelledAt: 'cancelledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ModerationLogScalarFieldEnum = {
+  id: 'id',
+  adminId: 'adminId',
+  action: 'action',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  reason: 'reason',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ReportScalarFieldEnum = {
+  id: 'id',
+  reporterId: 'reporterId',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  reason: 'reason',
+  description: 'description',
+  status: 'status',
+  adminId: 'adminId',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProductBoostScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  boostType: 'boostType',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  cost: 'cost',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.UserSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  action: 'action',
+  resource: 'resource',
+  resourceId: 'resourceId',
+  oldValues: 'oldValues',
+  newValues: 'newValues',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PaymentTransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  paydunyaRef: 'paydunyaRef',
+  paydunyaToken: 'paydunyaToken',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CommissionScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  sellerId: 'sellerId',
+  buyerId: 'buyerId',
+  productId: 'productId',
+  amount: 'amount',
+  percentage: 'percentage',
+  status: 'status',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -346,17 +469,6 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
-exports.Prisma.UserOrderByRelevanceFieldEnum = {
-  id: 'id',
-  email: 'email',
-  password: 'password',
-  phone: 'phone',
-  firstName: 'firstName',
-  lastName: 'lastName',
-  profilePicture: 'profilePicture',
-  location: 'location'
-};
-
 exports.Prisma.JsonNullValueFilter = {
   DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull,
@@ -367,142 +479,9 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-
-exports.Prisma.ProductOrderByRelevanceFieldEnum = {
-  id: 'id',
-  title: 'title',
-  description: 'description',
-  sellerId: 'sellerId',
-  location: 'location',
-  category: 'category',
-  condition: 'condition',
-  categoryId: 'categoryId',
-  locationId: 'locationId'
-};
-
-exports.Prisma.NotificationOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type'
-};
-
-exports.Prisma.ChatMessageOrderByRelevanceFieldEnum = {
-  id: 'id',
-  fromUserId: 'fromUserId',
-  toUserId: 'toUserId',
-  productId: 'productId',
-  message: 'message'
-};
-
-exports.Prisma.CreditOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId'
-};
-
-exports.Prisma.ReviewOrderByRelevanceFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  userId: 'userId',
-  comment: 'comment'
-};
-
-exports.Prisma.FavoriteOrderByRelevanceFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  userId: 'userId'
-};
-
-exports.Prisma.TransactionOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type',
-  currency: 'currency',
-  status: 'status',
-  description: 'description',
-  reference: 'reference'
-};
-
-exports.Prisma.OrderOrderByRelevanceFieldEnum = {
-  id: 'id',
-  buyerId: 'buyerId',
-  sellerId: 'sellerId',
-  productId: 'productId',
-  status: 'status',
-  trackingNumber: 'trackingNumber',
-  notes: 'notes'
-};
-
-exports.Prisma.CategoryOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  icon: 'icon',
-  parentId: 'parentId'
-};
-
-exports.Prisma.LocationOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  country: 'country'
-};
-
-exports.Prisma.AnalyticsEventOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  eventType: 'eventType',
-  entityId: 'entityId',
-  entityType: 'entityType',
-  ipAddress: 'ipAddress',
-  userAgent: 'userAgent'
-};
-
-exports.Prisma.DashboardMetricsOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  metricType: 'metricType',
-  period: 'period'
-};
-
-exports.Prisma.ForumOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  categoryId: 'categoryId',
-  locationId: 'locationId'
-};
-
-exports.Prisma.PostOrderByRelevanceFieldEnum = {
-  id: 'id',
-  forumId: 'forumId',
-  authorId: 'authorId',
-  title: 'title',
-  content: 'content'
-};
-
-exports.Prisma.CommentOrderByRelevanceFieldEnum = {
-  id: 'id',
-  postId: 'postId',
-  authorId: 'authorId',
-  content: 'content',
-  parentId: 'parentId'
-};
-
-exports.Prisma.EventOrderByRelevanceFieldEnum = {
-  id: 'id',
-  title: 'title',
-  description: 'description',
-  type: 'type'
-};
-
-exports.Prisma.ReferralOrderByRelevanceFieldEnum = {
-  id: 'id',
-  referrerId: 'referrerId',
-  referredId: 'referredId',
-  code: 'code',
-  status: 'status'
-};
 exports.RoleUtilisateur = exports.$Enums.RoleUtilisateur = {
   USER: 'USER',
+  VENDEUR: 'VENDEUR',
   VIP: 'VIP',
   PRO: 'PRO',
   MODERATOR: 'MODERATOR',
@@ -525,6 +504,7 @@ exports.Prisma.ModelName = {
   Credit: 'Credit',
   Review: 'Review',
   Favorite: 'Favorite',
+  Like: 'Like',
   Transaction: 'Transaction',
   Order: 'Order',
   Category: 'Category',
@@ -535,7 +515,16 @@ exports.Prisma.ModelName = {
   Post: 'Post',
   Comment: 'Comment',
   Event: 'Event',
-  Referral: 'Referral'
+  Referral: 'Referral',
+  CreditTransaction: 'CreditTransaction',
+  VipSubscription: 'VipSubscription',
+  ModerationLog: 'ModerationLog',
+  Report: 'Report',
+  ProductBoost: 'ProductBoost',
+  UserSession: 'UserSession',
+  AuditLog: 'AuditLog',
+  PaymentTransaction: 'PaymentTransaction',
+  Commission: 'Commission'
 };
 
 /**

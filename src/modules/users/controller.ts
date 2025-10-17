@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { z } from 'zod';
 import { UserService, avatarUpload } from './service';
 import { updateProfileSchema, userIdSchema, reportUserSchema } from './validation';
 import { AuthRequest } from '../auth/middleware';
@@ -7,14 +8,19 @@ export class UserController {
   static async getProfile(req: AuthRequest, res: Response) {
     try {
       const userId = req.user!.userId;
+      console.log('👤 [UserController] Récupération profil pour userId:', userId);
+
       const user = await UserService.getUserById(userId);
 
       if (!user) {
+        console.log('❌ [UserController] Utilisateur non trouvé:', userId);
         return res.status(404).json({ message: 'Utilisateur non trouvé' });
       }
 
+      console.log('✅ [UserController] Profil récupéré pour:', user.email);
       res.json({ user });
     } catch (error: any) {
+      console.log('❌ [UserController] Erreur récupération profil:', error);
       res.status(500).json({ message: 'Erreur serveur' });
     }
   }
@@ -57,7 +63,7 @@ export class UserController {
 
   static async getUserById(req: Request, res: Response) {
     try {
-      const { id } = userIdSchema.parse(req.params);
+      const { id } = req.params;
       const user = await UserService.getUserById(id);
 
       if (!user) {
@@ -66,9 +72,6 @@ export class UserController {
 
       res.json({ user });
     } catch (error: any) {
-      if (error.name === 'ZodError') {
-        return res.status(400).json({ message: 'ID invalide' });
-      }
       res.status(500).json({ message: 'Erreur serveur' });
     }
   }
@@ -76,6 +79,7 @@ export class UserController {
   static async getUserProducts(req: AuthRequest, res: Response) {
     try {
       const userId = req.user!.userId;
+
       const filters = {
         status: req.query.status as string,
         limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,

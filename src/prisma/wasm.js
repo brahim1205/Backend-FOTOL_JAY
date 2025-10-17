@@ -86,9 +86,6 @@ Prisma.NullTypes = {
  * Enums
  */
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
-  ReadUncommitted: 'ReadUncommitted',
-  ReadCommitted: 'ReadCommitted',
-  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -105,7 +102,15 @@ exports.Prisma.UserScalarFieldEnum = {
   firstName: 'firstName',
   lastName: 'lastName',
   profilePicture: 'profilePicture',
-  location: 'location'
+  location: 'location',
+  fcmToken: 'fcmToken',
+  emailVerified: 'emailVerified',
+  emailToken: 'emailToken',
+  resetToken: 'resetToken',
+  resetExpires: 'resetExpires',
+  lastLoginIP: 'lastLoginIP',
+  loginAttempts: 'loginAttempts',
+  lockedUntil: 'lockedUntil'
 };
 
 exports.Prisma.ProductScalarFieldEnum = {
@@ -163,6 +168,13 @@ exports.Prisma.ReviewScalarFieldEnum = {
 };
 
 exports.Prisma.FavoriteScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LikeScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
   userId: 'userId',
@@ -299,6 +311,117 @@ exports.Prisma.ReferralScalarFieldEnum = {
   completedAt: 'completedAt'
 };
 
+exports.Prisma.CreditTransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  amount: 'amount',
+  description: 'description',
+  reference: 'reference',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.VipSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  plan: 'plan',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  isActive: 'isActive',
+  autoRenew: 'autoRenew',
+  paymentRef: 'paymentRef',
+  cancelledAt: 'cancelledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ModerationLogScalarFieldEnum = {
+  id: 'id',
+  adminId: 'adminId',
+  action: 'action',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  reason: 'reason',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ReportScalarFieldEnum = {
+  id: 'id',
+  reporterId: 'reporterId',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  reason: 'reason',
+  description: 'description',
+  status: 'status',
+  adminId: 'adminId',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProductBoostScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  boostType: 'boostType',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  cost: 'cost',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.UserSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  action: 'action',
+  resource: 'resource',
+  resourceId: 'resourceId',
+  oldValues: 'oldValues',
+  newValues: 'newValues',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PaymentTransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  paydunyaRef: 'paydunyaRef',
+  paydunyaToken: 'paydunyaToken',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CommissionScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  sellerId: 'sellerId',
+  buyerId: 'buyerId',
+  productId: 'productId',
+  amount: 'amount',
+  percentage: 'percentage',
+  status: 'status',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -318,17 +441,6 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
-exports.Prisma.UserOrderByRelevanceFieldEnum = {
-  id: 'id',
-  email: 'email',
-  password: 'password',
-  phone: 'phone',
-  firstName: 'firstName',
-  lastName: 'lastName',
-  profilePicture: 'profilePicture',
-  location: 'location'
-};
-
 exports.Prisma.JsonNullValueFilter = {
   DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull,
@@ -339,142 +451,9 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-
-exports.Prisma.ProductOrderByRelevanceFieldEnum = {
-  id: 'id',
-  title: 'title',
-  description: 'description',
-  sellerId: 'sellerId',
-  location: 'location',
-  category: 'category',
-  condition: 'condition',
-  categoryId: 'categoryId',
-  locationId: 'locationId'
-};
-
-exports.Prisma.NotificationOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type'
-};
-
-exports.Prisma.ChatMessageOrderByRelevanceFieldEnum = {
-  id: 'id',
-  fromUserId: 'fromUserId',
-  toUserId: 'toUserId',
-  productId: 'productId',
-  message: 'message'
-};
-
-exports.Prisma.CreditOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId'
-};
-
-exports.Prisma.ReviewOrderByRelevanceFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  userId: 'userId',
-  comment: 'comment'
-};
-
-exports.Prisma.FavoriteOrderByRelevanceFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  userId: 'userId'
-};
-
-exports.Prisma.TransactionOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type',
-  currency: 'currency',
-  status: 'status',
-  description: 'description',
-  reference: 'reference'
-};
-
-exports.Prisma.OrderOrderByRelevanceFieldEnum = {
-  id: 'id',
-  buyerId: 'buyerId',
-  sellerId: 'sellerId',
-  productId: 'productId',
-  status: 'status',
-  trackingNumber: 'trackingNumber',
-  notes: 'notes'
-};
-
-exports.Prisma.CategoryOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  icon: 'icon',
-  parentId: 'parentId'
-};
-
-exports.Prisma.LocationOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  country: 'country'
-};
-
-exports.Prisma.AnalyticsEventOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  eventType: 'eventType',
-  entityId: 'entityId',
-  entityType: 'entityType',
-  ipAddress: 'ipAddress',
-  userAgent: 'userAgent'
-};
-
-exports.Prisma.DashboardMetricsOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  metricType: 'metricType',
-  period: 'period'
-};
-
-exports.Prisma.ForumOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  categoryId: 'categoryId',
-  locationId: 'locationId'
-};
-
-exports.Prisma.PostOrderByRelevanceFieldEnum = {
-  id: 'id',
-  forumId: 'forumId',
-  authorId: 'authorId',
-  title: 'title',
-  content: 'content'
-};
-
-exports.Prisma.CommentOrderByRelevanceFieldEnum = {
-  id: 'id',
-  postId: 'postId',
-  authorId: 'authorId',
-  content: 'content',
-  parentId: 'parentId'
-};
-
-exports.Prisma.EventOrderByRelevanceFieldEnum = {
-  id: 'id',
-  title: 'title',
-  description: 'description',
-  type: 'type'
-};
-
-exports.Prisma.ReferralOrderByRelevanceFieldEnum = {
-  id: 'id',
-  referrerId: 'referrerId',
-  referredId: 'referredId',
-  code: 'code',
-  status: 'status'
-};
 exports.RoleUtilisateur = exports.$Enums.RoleUtilisateur = {
   USER: 'USER',
+  VENDEUR: 'VENDEUR',
   VIP: 'VIP',
   PRO: 'PRO',
   MODERATOR: 'MODERATOR',
@@ -497,6 +476,7 @@ exports.Prisma.ModelName = {
   Credit: 'Credit',
   Review: 'Review',
   Favorite: 'Favorite',
+  Like: 'Like',
   Transaction: 'Transaction',
   Order: 'Order',
   Category: 'Category',
@@ -507,7 +487,16 @@ exports.Prisma.ModelName = {
   Post: 'Post',
   Comment: 'Comment',
   Event: 'Event',
-  Referral: 'Referral'
+  Referral: 'Referral',
+  CreditTransaction: 'CreditTransaction',
+  VipSubscription: 'VipSubscription',
+  ModerationLog: 'ModerationLog',
+  Report: 'Report',
+  ProductBoost: 'ProductBoost',
+  UserSession: 'UserSession',
+  AuditLog: 'AuditLog',
+  PaymentTransaction: 'PaymentTransaction',
+  Commission: 'Commission'
 };
 /**
  * Create the Client
@@ -520,7 +509,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/cherif/Bureau/FootolJaay/backend/src/prisma",
+      "value": "/home/cherif/Téléchargements/katachi/backend/src/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -534,7 +523,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/cherif/Bureau/FootolJaay/backend/prisma/schema.prisma",
+    "sourceFilePath": "/home/cherif/Téléchargements/katachi/backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -547,8 +536,7 @@ const config = {
   "datasourceNames": [
     "db"
   ],
-  "activeProvider": "mysql",
-  "postinstall": false,
+  "activeProvider": "sqlite",
   "inlineDatasources": {
     "db": {
       "url": {
@@ -557,13 +545,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum RoleUtilisateur {\n  USER\n  VIP\n  PRO\n  MODERATOR\n  ADMIN\n}\n\nenum StatutProduit {\n  PENDING\n  APPROVED\n  REJECTED\n  EXPIRED\n  SOLD\n}\n\nmodel User {\n  id               String          @id @default(cuid())\n  email            String          @unique\n  password         String\n  role             RoleUtilisateur @default(USER)\n  reputation       Int             @default(0)\n  isVip            Boolean         @default(false)\n  registrationDate DateTime        @default(now())\n  lastLogin        DateTime?\n  phone            String?\n  firstName        String?\n  lastName         String?\n  profilePicture   String?\n  location         String?\n\n  // Relations\n  products          Product[]\n  notifications     Notification[]\n  sentMessages      ChatMessage[]      @relation(\"FromUser\")\n  receivedMessages  ChatMessage[]      @relation(\"ToUser\")\n  credits           Credit?\n  reviews           Review[]\n  favorites         Favorite[]\n  transactions      Transaction[]\n  buyerOrders       Order[]            @relation(\"BuyerOrders\")\n  sellerOrders      Order[]            @relation(\"SellerOrders\")\n  analyticsEvents   AnalyticsEvent[]\n  dashboardMetrics  DashboardMetrics[]\n  posts             Post[]\n  comments          Comment[]\n  referrerReferrals Referral[]         @relation(\"ReferrerReferrals\")\n  referredReferrals Referral[]         @relation(\"ReferredReferrals\")\n\n  @@map(\"users\")\n}\n\nmodel Product {\n  id           String        @id @default(cuid())\n  title        String\n  description  String\n  price        Float\n  images       Json // Array of image URLs\n  status       StatutProduit @default(PENDING)\n  sellerId     String\n  views        Int           @default(0)\n  publishDate  DateTime      @default(now())\n  expiration   DateTime\n  renewalCount Int           @default(0) // Nombre de renouvellements effectués\n  location     String\n  category     String?\n  condition    String? // Neuf, Occasion, etc.\n  categoryId   String?\n  locationId   String?\n\n  // Relations\n  seller          User          @relation(fields: [sellerId], references: [id], onDelete: Cascade)\n  messages        ChatMessage[]\n  reviews         Review[]\n  favorites       Favorite[]\n  orders          Order[]\n  productCategory Category?     @relation(fields: [categoryId], references: [id])\n  productLocation Location?     @relation(fields: [locationId], references: [id])\n\n  @@map(\"products\")\n}\n\nmodel Notification {\n  id        String   @id @default(cuid())\n  userId    String\n  type      String // e.g., \"product_approved\", \"new_message\"\n  payload   Json // Additional data\n  read      Boolean  @default(false)\n  createdAt DateTime @default(now())\n\n  // Relations\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"notifications\")\n}\n\nmodel ChatMessage {\n  id         String   @id @default(cuid())\n  fromUserId String\n  toUserId   String\n  productId  String?\n  message    String\n  createdAt  DateTime @default(now())\n\n  // Relations\n  fromUser User     @relation(\"FromUser\", fields: [fromUserId], references: [id], onDelete: Cascade)\n  toUser   User     @relation(\"ToUser\", fields: [toUserId], references: [id], onDelete: Cascade)\n  product  Product? @relation(fields: [productId], references: [id], onDelete: SetNull)\n\n  @@map(\"chat_messages\")\n}\n\nmodel Credit {\n  id      String @id @default(cuid())\n  userId  String @unique\n  balance Int    @default(0)\n\n  // Relations\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"credits\")\n}\n\nmodel Review {\n  id        String   @id @default(cuid())\n  productId String\n  userId    String\n  rating    Int // 1-5 étoiles\n  comment   String?\n  photos    Json? // Array of photo URLs for review\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)\n  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([productId, userId]) // Un avis par utilisateur par produit\n  @@map(\"reviews\")\n}\n\nmodel Favorite {\n  id        String   @id @default(cuid())\n  productId String\n  userId    String\n  createdAt DateTime @default(now())\n\n  // Relations\n  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)\n  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([productId, userId]) // Un favori par utilisateur par produit\n  @@map(\"favorites\")\n}\n\nmodel Transaction {\n  id          String   @id @default(cuid())\n  userId      String\n  type        String // 'purchase', 'vip_subscription', 'credit_purchase', 'commission'\n  amount      Float\n  currency    String   @default(\"EUR\")\n  status      String   @default(\"pending\") // 'pending', 'completed', 'failed', 'refunded'\n  description String?\n  reference   String? // ID de transaction externe (Stripe, etc.)\n  metadata    Json? // Données supplémentaires\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  // Relations\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"transactions\")\n}\n\nmodel Order {\n  id              String   @id @default(cuid())\n  buyerId         String\n  sellerId        String\n  productId       String\n  quantity        Int      @default(1)\n  totalAmount     Float\n  status          String   @default(\"pending\") // 'pending', 'paid', 'shipped', 'delivered', 'cancelled'\n  shippingAddress Json? // Adresse de livraison\n  trackingNumber  String?\n  notes           String?\n  createdAt       DateTime @default(now())\n  updatedAt       DateTime @updatedAt\n\n  // Relations\n  buyer   User    @relation(\"BuyerOrders\", fields: [buyerId], references: [id], onDelete: Cascade)\n  seller  User    @relation(\"SellerOrders\", fields: [sellerId], references: [id], onDelete: Cascade)\n  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)\n\n  @@map(\"orders\")\n}\n\nmodel Category {\n  id          String   @id @default(cuid())\n  name        String   @unique\n  description String?\n  icon        String?\n  parentId    String?\n  createdAt   DateTime @default(now())\n\n  // Relations\n  parent   Category?  @relation(\"CategoryHierarchy\", fields: [parentId], references: [id])\n  children Category[] @relation(\"CategoryHierarchy\")\n  products Product[]\n  forums   Forum[]\n\n  @@map(\"categories\")\n}\n\nmodel Location {\n  id        String   @id @default(cuid())\n  name      String // Nom de la ville/région\n  latitude  Float?\n  longitude Float?\n  country   String   @default(\"France\")\n  createdAt DateTime @default(now())\n\n  // Relations\n  products Product[]\n  forums   Forum[]\n\n  @@map(\"locations\")\n}\n\nmodel AnalyticsEvent {\n  id         String   @id @default(cuid())\n  userId     String?\n  eventType  String // 'product_view', 'product_purchase', 'user_login', etc.\n  entityId   String? // ID du produit, utilisateur, etc.\n  entityType String? // 'product', 'user', 'category', etc.\n  metadata   Json? // Données supplémentaires\n  ipAddress  String?\n  userAgent  String?\n  createdAt  DateTime @default(now())\n\n  // Relations\n  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)\n\n  @@map(\"analytics_events\")\n}\n\nmodel DashboardMetrics {\n  id          String   @id @default(cuid())\n  userId      String // Vendeur ou admin\n  metricType  String // 'sales', 'views', 'conversions', 'revenue'\n  period      String // 'daily', 'weekly', 'monthly'\n  periodStart DateTime\n  periodEnd   DateTime\n  value       Float\n  metadata    Json? // Données supplémentaires\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  // Relations\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([userId, metricType, period, periodStart])\n  @@map(\"dashboard_metrics\")\n}\n\nmodel Forum {\n  id          String   @id @default(cuid())\n  name        String\n  description String?\n  categoryId  String?\n  locationId  String?\n  isActive    Boolean  @default(true)\n  createdAt   DateTime @default(now())\n\n  // Relations\n  category Category? @relation(fields: [categoryId], references: [id])\n  location Location? @relation(fields: [locationId], references: [id])\n  posts    Post[]\n\n  @@map(\"forums\")\n}\n\nmodel Post {\n  id        String   @id @default(cuid())\n  forumId   String\n  authorId  String\n  title     String\n  content   String\n  isPinned  Boolean  @default(false)\n  isLocked  Boolean  @default(false)\n  views     Int      @default(0)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  forum    Forum     @relation(fields: [forumId], references: [id], onDelete: Cascade)\n  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  comments Comment[]\n\n  @@map(\"posts\")\n}\n\nmodel Comment {\n  id        String   @id @default(cuid())\n  postId    String\n  authorId  String\n  content   String\n  parentId  String? // Pour les réponses imbriquées\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relations\n  post    Post      @relation(fields: [postId], references: [id], onDelete: Cascade)\n  author  User      @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  parent  Comment?  @relation(\"CommentReplies\", fields: [parentId], references: [id])\n  replies Comment[] @relation(\"CommentReplies\")\n\n  @@map(\"comments\")\n}\n\nmodel Event {\n  id          String   @id @default(cuid())\n  title       String\n  description String\n  type        String // 'promotion', 'event', 'flash_sale'\n  startDate   DateTime\n  endDate     DateTime\n  isActive    Boolean  @default(true)\n  discount    Float? // Pourcentage de réduction\n  targetUsers Json? // Critères pour cibler les utilisateurs\n  metadata    Json? // Données supplémentaires\n  createdAt   DateTime @default(now())\n\n  @@map(\"events\")\n}\n\nmodel Referral {\n  id          String    @id @default(cuid())\n  referrerId  String // Utilisateur qui parraine\n  referredId  String // Utilisateur parrainé\n  code        String    @unique // Code de parrainage unique\n  status      String    @default(\"pending\") // 'pending', 'completed', 'expired'\n  rewardGiven Boolean   @default(false)\n  createdAt   DateTime  @default(now())\n  completedAt DateTime?\n\n  // Relations\n  referrer User @relation(\"ReferrerReferrals\", fields: [referrerId], references: [id])\n  referred User @relation(\"ReferredReferrals\", fields: [referredId], references: [id])\n\n  @@map(\"referrals\")\n}\n",
-  "inlineSchemaHash": "5d397dc27ff34a3533506fb805f66d6254d69ce6f7a8a7d2715f38abad06d605",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id                  String               @id @default(cuid())\n  email               String               @unique\n  password            String\n  role                RoleUtilisateur      @default(USER)\n  reputation          Int                  @default(0)\n  isVip               Boolean              @default(false)\n  registrationDate    DateTime             @default(now())\n  lastLogin           DateTime?\n  phone               String?\n  firstName           String?\n  lastName            String?\n  profilePicture      String?\n  location            String?\n  fcmToken            String?\n  emailVerified       Boolean              @default(false)\n  emailToken          String?\n  resetToken          String?\n  resetExpires        DateTime?\n  lastLoginIP         String?\n  loginAttempts       Int                  @default(0)\n  lockedUntil         DateTime?\n  analyticsEvents     AnalyticsEvent[]\n  auditLogs           AuditLog[]\n  receivedMessages    ChatMessage[]        @relation(\"ToUser\")\n  sentMessages        ChatMessage[]        @relation(\"FromUser\")\n  comments            Comment[]\n  buyerCommissions    Commission[]         @relation(\"BuyerCommissions\")\n  sellerCommissions   Commission[]         @relation(\"SellerCommissions\")\n  CreditTransaction   CreditTransaction[]\n  credits             Credit?\n  dashboardMetrics    DashboardMetrics[]\n  favorites           Favorite[]\n  likes               Like[]\n  ModerationLog       ModerationLog[]\n  notifications       Notification[]\n  sellerOrders        Order[]              @relation(\"SellerOrders\")\n  buyerOrders         Order[]              @relation(\"BuyerOrders\")\n  paymentTransactions PaymentTransaction[]\n  posts               Post[]\n  products            Product[]\n  referredReferrals   Referral[]           @relation(\"ReferredReferrals\")\n  referrerReferrals   Referral[]           @relation(\"ReferrerReferrals\")\n  adminReports        Report[]             @relation(\"AdminReports\")\n  reports             Report[]             @relation(\"ReporterReports\")\n  reviews             Review[]\n  transactions        Transaction[]\n  sessions            UserSession[]\n  vipSubscription     VipSubscription?\n\n  @@map(\"users\")\n}\n\nmodel Product {\n  id              String        @id @default(cuid())\n  title           String\n  description     String\n  price           Float\n  images          Json\n  status          StatutProduit @default(PENDING)\n  sellerId        String\n  views           Int           @default(0)\n  publishDate     DateTime      @default(now())\n  expiration      DateTime\n  renewalCount    Int           @default(0)\n  location        String\n  category        String?\n  condition       String?\n  categoryId      String?\n  locationId      String?\n  messages        ChatMessage[]\n  commissions     Commission[]\n  favorites       Favorite[]\n  likes           Like[]\n  orders          Order[]\n  boost           ProductBoost?\n  productLocation Location?     @relation(fields: [locationId], references: [id])\n  productCategory Category?     @relation(fields: [categoryId], references: [id])\n  seller          User          @relation(fields: [sellerId], references: [id], onDelete: Cascade)\n  reviews         Review[]\n\n  @@map(\"products\")\n}\n\nmodel Notification {\n  id        String   @id @default(cuid())\n  userId    String\n  type      String\n  payload   Json\n  read      Boolean  @default(false)\n  createdAt DateTime @default(now())\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"notifications\")\n}\n\nmodel ChatMessage {\n  id         String   @id @default(cuid())\n  fromUserId String\n  toUserId   String\n  productId  String?\n  message    String\n  createdAt  DateTime @default(now())\n  product    Product? @relation(fields: [productId], references: [id])\n  toUser     User     @relation(\"ToUser\", fields: [toUserId], references: [id], onDelete: Cascade)\n  fromUser   User     @relation(\"FromUser\", fields: [fromUserId], references: [id], onDelete: Cascade)\n\n  @@map(\"chat_messages\")\n}\n\nmodel Credit {\n  id      String @id @default(cuid())\n  userId  String @unique\n  balance Int    @default(0)\n  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"credits\")\n}\n\nmodel Review {\n  id        String   @id @default(cuid())\n  productId String\n  userId    String\n  rating    Int\n  comment   String?\n  photos    Json?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)\n\n  @@unique([productId, userId])\n  @@map(\"reviews\")\n}\n\nmodel Favorite {\n  id        String   @id @default(cuid())\n  productId String\n  userId    String\n  createdAt DateTime @default(now())\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)\n\n  @@unique([productId, userId])\n  @@map(\"favorites\")\n}\n\nmodel Like {\n  id        String   @id @default(cuid())\n  productId String\n  userId    String\n  createdAt DateTime @default(now())\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)\n\n  @@unique([productId, userId])\n  @@map(\"likes\")\n}\n\nmodel Transaction {\n  id          String   @id @default(cuid())\n  userId      String\n  type        String\n  amount      Float\n  currency    String   @default(\"EUR\")\n  status      String   @default(\"pending\")\n  description String?\n  reference   String?\n  metadata    Json?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"transactions\")\n}\n\nmodel Order {\n  id              String      @id @default(cuid())\n  buyerId         String\n  sellerId        String\n  productId       String\n  quantity        Int         @default(1)\n  totalAmount     Float\n  status          String      @default(\"pending\")\n  shippingAddress Json?\n  trackingNumber  String?\n  notes           String?\n  createdAt       DateTime    @default(now())\n  updatedAt       DateTime    @updatedAt\n  commission      Commission?\n  product         Product     @relation(fields: [productId], references: [id], onDelete: Cascade)\n  seller          User        @relation(\"SellerOrders\", fields: [sellerId], references: [id], onDelete: Cascade)\n  buyer           User        @relation(\"BuyerOrders\", fields: [buyerId], references: [id], onDelete: Cascade)\n\n  @@map(\"orders\")\n}\n\nmodel Category {\n  id          String     @id @default(cuid())\n  name        String     @unique\n  description String?\n  icon        String?\n  parentId    String?\n  createdAt   DateTime   @default(now())\n  parent      Category?  @relation(\"CategoryHierarchy\", fields: [parentId], references: [id])\n  children    Category[] @relation(\"CategoryHierarchy\")\n  forums      Forum[]\n  products    Product[]\n\n  @@map(\"categories\")\n}\n\nmodel Location {\n  id        String    @id @default(cuid())\n  name      String\n  latitude  Float?\n  longitude Float?\n  country   String    @default(\"France\")\n  createdAt DateTime  @default(now())\n  forums    Forum[]\n  products  Product[]\n\n  @@map(\"locations\")\n}\n\nmodel AnalyticsEvent {\n  id         String   @id @default(cuid())\n  userId     String?\n  eventType  String\n  entityId   String?\n  entityType String?\n  metadata   Json?\n  ipAddress  String?\n  userAgent  String?\n  createdAt  DateTime @default(now())\n  user       User?    @relation(fields: [userId], references: [id])\n\n  @@map(\"analytics_events\")\n}\n\nmodel DashboardMetrics {\n  id          String   @id @default(cuid())\n  userId      String\n  metricType  String\n  period      String\n  periodStart DateTime\n  periodEnd   DateTime\n  value       Float\n  metadata    Json?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([userId, metricType, period, periodStart])\n  @@map(\"dashboard_metrics\")\n}\n\nmodel Forum {\n  id          String    @id @default(cuid())\n  name        String\n  description String?\n  categoryId  String?\n  locationId  String?\n  isActive    Boolean   @default(true)\n  createdAt   DateTime  @default(now())\n  location    Location? @relation(fields: [locationId], references: [id])\n  category    Category? @relation(fields: [categoryId], references: [id])\n  posts       Post[]\n\n  @@map(\"forums\")\n}\n\nmodel Post {\n  id        String    @id @default(cuid())\n  forumId   String\n  authorId  String\n  title     String\n  content   String\n  isPinned  Boolean   @default(false)\n  isLocked  Boolean   @default(false)\n  views     Int       @default(0)\n  createdAt DateTime  @default(now())\n  updatedAt DateTime  @updatedAt\n  comments  Comment[]\n  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  forum     Forum     @relation(fields: [forumId], references: [id], onDelete: Cascade)\n\n  @@map(\"posts\")\n}\n\nmodel Comment {\n  id        String    @id @default(cuid())\n  postId    String\n  authorId  String\n  content   String\n  parentId  String?\n  createdAt DateTime  @default(now())\n  updatedAt DateTime  @updatedAt\n  parent    Comment?  @relation(\"CommentReplies\", fields: [parentId], references: [id])\n  replies   Comment[] @relation(\"CommentReplies\")\n  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)\n\n  @@map(\"comments\")\n}\n\nmodel Event {\n  id          String   @id @default(cuid())\n  title       String\n  description String\n  type        String\n  startDate   DateTime\n  endDate     DateTime\n  isActive    Boolean  @default(true)\n  discount    Float?\n  targetUsers Json?\n  metadata    Json?\n  createdAt   DateTime @default(now())\n\n  @@map(\"events\")\n}\n\nmodel Referral {\n  id          String    @id @default(cuid())\n  referrerId  String\n  referredId  String\n  code        String    @unique\n  status      String    @default(\"pending\")\n  rewardGiven Boolean   @default(false)\n  createdAt   DateTime  @default(now())\n  completedAt DateTime?\n  referred    User      @relation(\"ReferredReferrals\", fields: [referredId], references: [id])\n  referrer    User      @relation(\"ReferrerReferrals\", fields: [referrerId], references: [id])\n\n  @@map(\"referrals\")\n}\n\nmodel CreditTransaction {\n  id          String   @id @default(cuid())\n  userId      String\n  type        String\n  amount      Int\n  description String?\n  reference   String?\n  metadata    Json?\n  createdAt   DateTime @default(now())\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"credit_transactions\")\n}\n\nmodel VipSubscription {\n  id          String    @id @default(cuid())\n  userId      String    @unique\n  plan        String\n  startDate   DateTime  @default(now())\n  endDate     DateTime\n  isActive    Boolean   @default(true)\n  autoRenew   Boolean   @default(false)\n  paymentRef  String?\n  cancelledAt DateTime?\n  createdAt   DateTime  @default(now())\n  updatedAt   DateTime  @updatedAt\n  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"vip_subscriptions\")\n}\n\nmodel ModerationLog {\n  id         String   @id @default(cuid())\n  adminId    String\n  action     String\n  targetType String\n  targetId   String\n  reason     String?\n  metadata   Json?\n  createdAt  DateTime @default(now())\n  admin      User     @relation(fields: [adminId], references: [id])\n\n  @@map(\"moderation_logs\")\n}\n\nmodel Report {\n  id          String    @id @default(cuid())\n  reporterId  String\n  targetType  String\n  targetId    String\n  reason      String\n  description String?\n  status      String    @default(\"pending\")\n  adminId     String?\n  resolvedAt  DateTime?\n  createdAt   DateTime  @default(now())\n  updatedAt   DateTime  @updatedAt\n  admin       User?     @relation(\"AdminReports\", fields: [adminId], references: [id])\n  reporter    User      @relation(\"ReporterReports\", fields: [reporterId], references: [id])\n\n  @@map(\"reports\")\n}\n\nmodel ProductBoost {\n  id        String   @id @default(cuid())\n  productId String   @unique\n  boostType String\n  startDate DateTime @default(now())\n  endDate   DateTime\n  cost      Int\n  isActive  Boolean  @default(true)\n  createdAt DateTime @default(now())\n  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)\n\n  @@map(\"product_boosts\")\n}\n\nmodel UserSession {\n  id        String   @id @default(cuid())\n  userId    String\n  token     String   @unique\n  ipAddress String?\n  userAgent String?\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"user_sessions\")\n}\n\nmodel AuditLog {\n  id         String   @id @default(cuid())\n  userId     String?\n  action     String\n  resource   String\n  resourceId String?\n  oldValues  Json?\n  newValues  Json?\n  ipAddress  String?\n  userAgent  String?\n  createdAt  DateTime @default(now())\n  user       User?    @relation(fields: [userId], references: [id])\n\n  @@map(\"audit_logs\")\n}\n\nmodel PaymentTransaction {\n  id            String   @id @default(cuid())\n  userId        String\n  type          String\n  amount        Float\n  currency      String   @default(\"XOF\")\n  status        String   @default(\"pending\")\n  paydunyaRef   String?\n  paydunyaToken String?\n  metadata      Json?\n  createdAt     DateTime @default(now())\n  updatedAt     DateTime @updatedAt\n  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"payment_transactions\")\n}\n\nmodel Commission {\n  id         String    @id @default(cuid())\n  orderId    String    @unique\n  sellerId   String\n  buyerId    String\n  productId  String\n  amount     Float\n  percentage Float\n  status     String    @default(\"pending\")\n  paidAt     DateTime?\n  createdAt  DateTime  @default(now())\n  product    Product   @relation(fields: [productId], references: [id])\n  buyer      User      @relation(\"BuyerCommissions\", fields: [buyerId], references: [id])\n  seller     User      @relation(\"SellerCommissions\", fields: [sellerId], references: [id])\n  order      Order     @relation(fields: [orderId], references: [id])\n\n  @@map(\"commissions\")\n}\n\nenum RoleUtilisateur {\n  USER\n  VENDEUR\n  VIP\n  PRO\n  MODERATOR\n  ADMIN\n}\n\nenum StatutProduit {\n  PENDING\n  APPROVED\n  REJECTED\n  EXPIRED\n  SOLD\n}\n",
+  "inlineSchemaHash": "191a059cf8c6a1009e9d678a73dd02eced2a7a392f9483f614e06ab3133b0ca8",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"RoleUtilisateur\"},{\"name\":\"reputation\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isVip\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"registrationDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"profilePicture\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToUser\"},{\"name\":\"notifications\",\"kind\":\"object\",\"type\":\"Notification\",\"relationName\":\"NotificationToUser\"},{\"name\":\"sentMessages\",\"kind\":\"object\",\"type\":\"ChatMessage\",\"relationName\":\"FromUser\"},{\"name\":\"receivedMessages\",\"kind\":\"object\",\"type\":\"ChatMessage\",\"relationName\":\"ToUser\"},{\"name\":\"credits\",\"kind\":\"object\",\"type\":\"Credit\",\"relationName\":\"CreditToUser\"},{\"name\":\"reviews\",\"kind\":\"object\",\"type\":\"Review\",\"relationName\":\"ReviewToUser\"},{\"name\":\"favorites\",\"kind\":\"object\",\"type\":\"Favorite\",\"relationName\":\"FavoriteToUser\"},{\"name\":\"transactions\",\"kind\":\"object\",\"type\":\"Transaction\",\"relationName\":\"TransactionToUser\"},{\"name\":\"buyerOrders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"BuyerOrders\"},{\"name\":\"sellerOrders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"SellerOrders\"},{\"name\":\"analyticsEvents\",\"kind\":\"object\",\"type\":\"AnalyticsEvent\",\"relationName\":\"AnalyticsEventToUser\"},{\"name\":\"dashboardMetrics\",\"kind\":\"object\",\"type\":\"DashboardMetrics\",\"relationName\":\"DashboardMetricsToUser\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToUser\"},{\"name\":\"comments\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentToUser\"},{\"name\":\"referrerReferrals\",\"kind\":\"object\",\"type\":\"Referral\",\"relationName\":\"ReferrerReferrals\"},{\"name\":\"referredReferrals\",\"kind\":\"object\",\"type\":\"Referral\",\"relationName\":\"ReferredReferrals\"}],\"dbName\":\"users\"},\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"images\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"StatutProduit\"},{\"name\":\"sellerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"views\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"publishDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"expiration\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"renewalCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"condition\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"locationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"seller\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ProductToUser\"},{\"name\":\"messages\",\"kind\":\"object\",\"type\":\"ChatMessage\",\"relationName\":\"ChatMessageToProduct\"},{\"name\":\"reviews\",\"kind\":\"object\",\"type\":\"Review\",\"relationName\":\"ProductToReview\"},{\"name\":\"favorites\",\"kind\":\"object\",\"type\":\"Favorite\",\"relationName\":\"FavoriteToProduct\"},{\"name\":\"orders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderToProduct\"},{\"name\":\"productCategory\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"productLocation\",\"kind\":\"object\",\"type\":\"Location\",\"relationName\":\"LocationToProduct\"}],\"dbName\":\"products\"},\"Notification\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"payload\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"read\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"NotificationToUser\"}],\"dbName\":\"notifications\"},\"ChatMessage\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fromUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"toUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"message\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"fromUser\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"FromUser\"},{\"name\":\"toUser\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ToUser\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ChatMessageToProduct\"}],\"dbName\":\"chat_messages\"},\"Credit\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"balance\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CreditToUser\"}],\"dbName\":\"credits\"},\"Review\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"comment\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"photos\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToReview\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReviewToUser\"}],\"dbName\":\"reviews\"},\"Favorite\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"FavoriteToProduct\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"FavoriteToUser\"}],\"dbName\":\"favorites\"},\"Transaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reference\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TransactionToUser\"}],\"dbName\":\"transactions\"},\"Order\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"buyerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sellerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalAmount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingAddress\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"trackingNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"buyer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"BuyerOrders\"},{\"name\":\"seller\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SellerOrders\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"OrderToProduct\"}],\"dbName\":\"orders\"},\"Category\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"icon\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"parentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"parent\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryHierarchy\"},{\"name\":\"children\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryHierarchy\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"forums\",\"kind\":\"object\",\"type\":\"Forum\",\"relationName\":\"CategoryToForum\"}],\"dbName\":\"categories\"},\"Location\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"latitude\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"longitude\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"LocationToProduct\"},{\"name\":\"forums\",\"kind\":\"object\",\"type\":\"Forum\",\"relationName\":\"ForumToLocation\"}],\"dbName\":\"locations\"},\"AnalyticsEvent\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"eventType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"entityId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"entityType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AnalyticsEventToUser\"}],\"dbName\":\"analytics_events\"},\"DashboardMetrics\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metricType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"period\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"periodStart\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"periodEnd\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"DashboardMetricsToUser\"}],\"dbName\":\"dashboard_metrics\"},\"Forum\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"locationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToForum\"},{\"name\":\"location\",\"kind\":\"object\",\"type\":\"Location\",\"relationName\":\"ForumToLocation\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"ForumToPost\"}],\"dbName\":\"forums\"},\"Post\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"forumId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isPinned\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isLocked\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"views\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"forum\",\"kind\":\"object\",\"type\":\"Forum\",\"relationName\":\"ForumToPost\"},{\"name\":\"author\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PostToUser\"},{\"name\":\"comments\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentToPost\"}],\"dbName\":\"posts\"},\"Comment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"parentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"CommentToPost\"},{\"name\":\"author\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CommentToUser\"},{\"name\":\"parent\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentReplies\"},{\"name\":\"replies\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentReplies\"}],\"dbName\":\"comments\"},\"Event\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"startDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"endDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"discount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"targetUsers\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"events\"},\"Referral\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"referrerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"referredId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rewardGiven\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"completedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"referrer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReferrerReferrals\"},{\"name\":\"referred\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReferredReferrals\"}],\"dbName\":\"referrals\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"RoleUtilisateur\"},{\"name\":\"reputation\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isVip\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"registrationDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"profilePicture\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fcmToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"emailToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resetToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resetExpires\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastLoginIP\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"loginAttempts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"lockedUntil\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"analyticsEvents\",\"kind\":\"object\",\"type\":\"AnalyticsEvent\",\"relationName\":\"AnalyticsEventToUser\"},{\"name\":\"auditLogs\",\"kind\":\"object\",\"type\":\"AuditLog\",\"relationName\":\"AuditLogToUser\"},{\"name\":\"receivedMessages\",\"kind\":\"object\",\"type\":\"ChatMessage\",\"relationName\":\"ToUser\"},{\"name\":\"sentMessages\",\"kind\":\"object\",\"type\":\"ChatMessage\",\"relationName\":\"FromUser\"},{\"name\":\"comments\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentToUser\"},{\"name\":\"buyerCommissions\",\"kind\":\"object\",\"type\":\"Commission\",\"relationName\":\"BuyerCommissions\"},{\"name\":\"sellerCommissions\",\"kind\":\"object\",\"type\":\"Commission\",\"relationName\":\"SellerCommissions\"},{\"name\":\"CreditTransaction\",\"kind\":\"object\",\"type\":\"CreditTransaction\",\"relationName\":\"CreditTransactionToUser\"},{\"name\":\"credits\",\"kind\":\"object\",\"type\":\"Credit\",\"relationName\":\"CreditToUser\"},{\"name\":\"dashboardMetrics\",\"kind\":\"object\",\"type\":\"DashboardMetrics\",\"relationName\":\"DashboardMetricsToUser\"},{\"name\":\"favorites\",\"kind\":\"object\",\"type\":\"Favorite\",\"relationName\":\"FavoriteToUser\"},{\"name\":\"likes\",\"kind\":\"object\",\"type\":\"Like\",\"relationName\":\"LikeToUser\"},{\"name\":\"ModerationLog\",\"kind\":\"object\",\"type\":\"ModerationLog\",\"relationName\":\"ModerationLogToUser\"},{\"name\":\"notifications\",\"kind\":\"object\",\"type\":\"Notification\",\"relationName\":\"NotificationToUser\"},{\"name\":\"sellerOrders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"SellerOrders\"},{\"name\":\"buyerOrders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"BuyerOrders\"},{\"name\":\"paymentTransactions\",\"kind\":\"object\",\"type\":\"PaymentTransaction\",\"relationName\":\"PaymentTransactionToUser\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToUser\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToUser\"},{\"name\":\"referredReferrals\",\"kind\":\"object\",\"type\":\"Referral\",\"relationName\":\"ReferredReferrals\"},{\"name\":\"referrerReferrals\",\"kind\":\"object\",\"type\":\"Referral\",\"relationName\":\"ReferrerReferrals\"},{\"name\":\"adminReports\",\"kind\":\"object\",\"type\":\"Report\",\"relationName\":\"AdminReports\"},{\"name\":\"reports\",\"kind\":\"object\",\"type\":\"Report\",\"relationName\":\"ReporterReports\"},{\"name\":\"reviews\",\"kind\":\"object\",\"type\":\"Review\",\"relationName\":\"ReviewToUser\"},{\"name\":\"transactions\",\"kind\":\"object\",\"type\":\"Transaction\",\"relationName\":\"TransactionToUser\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"UserSession\",\"relationName\":\"UserToUserSession\"},{\"name\":\"vipSubscription\",\"kind\":\"object\",\"type\":\"VipSubscription\",\"relationName\":\"UserToVipSubscription\"}],\"dbName\":\"users\"},\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"images\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"StatutProduit\"},{\"name\":\"sellerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"views\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"publishDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"expiration\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"renewalCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"condition\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"locationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"messages\",\"kind\":\"object\",\"type\":\"ChatMessage\",\"relationName\":\"ChatMessageToProduct\"},{\"name\":\"commissions\",\"kind\":\"object\",\"type\":\"Commission\",\"relationName\":\"CommissionToProduct\"},{\"name\":\"favorites\",\"kind\":\"object\",\"type\":\"Favorite\",\"relationName\":\"FavoriteToProduct\"},{\"name\":\"likes\",\"kind\":\"object\",\"type\":\"Like\",\"relationName\":\"LikeToProduct\"},{\"name\":\"orders\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"OrderToProduct\"},{\"name\":\"boost\",\"kind\":\"object\",\"type\":\"ProductBoost\",\"relationName\":\"ProductToProductBoost\"},{\"name\":\"productLocation\",\"kind\":\"object\",\"type\":\"Location\",\"relationName\":\"LocationToProduct\"},{\"name\":\"productCategory\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"seller\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ProductToUser\"},{\"name\":\"reviews\",\"kind\":\"object\",\"type\":\"Review\",\"relationName\":\"ProductToReview\"}],\"dbName\":\"products\"},\"Notification\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"payload\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"read\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"NotificationToUser\"}],\"dbName\":\"notifications\"},\"ChatMessage\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fromUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"toUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"message\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ChatMessageToProduct\"},{\"name\":\"toUser\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ToUser\"},{\"name\":\"fromUser\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"FromUser\"}],\"dbName\":\"chat_messages\"},\"Credit\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"balance\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CreditToUser\"}],\"dbName\":\"credits\"},\"Review\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"comment\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"photos\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReviewToUser\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToReview\"}],\"dbName\":\"reviews\"},\"Favorite\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"FavoriteToUser\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"FavoriteToProduct\"}],\"dbName\":\"favorites\"},\"Like\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"LikeToUser\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"LikeToProduct\"}],\"dbName\":\"likes\"},\"Transaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reference\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TransactionToUser\"}],\"dbName\":\"transactions\"},\"Order\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"buyerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sellerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"totalAmount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingAddress\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"trackingNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"commission\",\"kind\":\"object\",\"type\":\"Commission\",\"relationName\":\"CommissionToOrder\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"OrderToProduct\"},{\"name\":\"seller\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SellerOrders\"},{\"name\":\"buyer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"BuyerOrders\"}],\"dbName\":\"orders\"},\"Category\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"icon\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"parentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"parent\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryHierarchy\"},{\"name\":\"children\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryHierarchy\"},{\"name\":\"forums\",\"kind\":\"object\",\"type\":\"Forum\",\"relationName\":\"CategoryToForum\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CategoryToProduct\"}],\"dbName\":\"categories\"},\"Location\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"latitude\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"longitude\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"forums\",\"kind\":\"object\",\"type\":\"Forum\",\"relationName\":\"ForumToLocation\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"LocationToProduct\"}],\"dbName\":\"locations\"},\"AnalyticsEvent\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"eventType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"entityId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"entityType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AnalyticsEventToUser\"}],\"dbName\":\"analytics_events\"},\"DashboardMetrics\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metricType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"period\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"periodStart\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"periodEnd\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"DashboardMetricsToUser\"}],\"dbName\":\"dashboard_metrics\"},\"Forum\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"locationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"location\",\"kind\":\"object\",\"type\":\"Location\",\"relationName\":\"ForumToLocation\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToForum\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"ForumToPost\"}],\"dbName\":\"forums\"},\"Post\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"forumId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isPinned\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isLocked\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"views\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"comments\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentToPost\"},{\"name\":\"author\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PostToUser\"},{\"name\":\"forum\",\"kind\":\"object\",\"type\":\"Forum\",\"relationName\":\"ForumToPost\"}],\"dbName\":\"posts\"},\"Comment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"parentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"parent\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentReplies\"},{\"name\":\"replies\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentReplies\"},{\"name\":\"author\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CommentToUser\"},{\"name\":\"post\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"CommentToPost\"}],\"dbName\":\"comments\"},\"Event\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"startDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"endDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"discount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"targetUsers\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"events\"},\"Referral\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"referrerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"referredId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rewardGiven\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"completedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"referred\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReferredReferrals\"},{\"name\":\"referrer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReferrerReferrals\"}],\"dbName\":\"referrals\"},\"CreditTransaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reference\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CreditTransactionToUser\"}],\"dbName\":\"credit_transactions\"},\"VipSubscription\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"plan\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"startDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"endDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"autoRenew\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"paymentRef\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cancelledAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToVipSubscription\"}],\"dbName\":\"vip_subscriptions\"},\"ModerationLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"adminId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"action\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"targetType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"targetId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reason\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"admin\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ModerationLogToUser\"}],\"dbName\":\"moderation_logs\"},\"Report\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reporterId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"targetType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"targetId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reason\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"adminId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resolvedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"admin\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AdminReports\"},{\"name\":\"reporter\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReporterReports\"}],\"dbName\":\"reports\"},\"ProductBoost\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"boostType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"startDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"endDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"cost\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToProductBoost\"}],\"dbName\":\"product_boosts\"},\"UserSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserSession\"}],\"dbName\":\"user_sessions\"},\"AuditLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"action\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resource\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resourceId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"oldValues\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"newValues\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AuditLogToUser\"}],\"dbName\":\"audit_logs\"},\"PaymentTransaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"paydunyaRef\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"paydunyaToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PaymentTransactionToUser\"}],\"dbName\":\"payment_transactions\"},\"Commission\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"orderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sellerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"buyerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"percentage\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"paidAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CommissionToProduct\"},{\"name\":\"buyer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"BuyerCommissions\"},{\"name\":\"seller\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SellerCommissions\"},{\"name\":\"order\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"CommissionToOrder\"}],\"dbName\":\"commissions\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

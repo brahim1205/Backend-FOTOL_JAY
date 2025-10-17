@@ -179,6 +179,70 @@ router.delete('/:id', authenticateToken, ProductController.deleteProduct);
 
 /**
  * @swagger
+ * /products/pending:
+ *   get:
+ *     summary: Obtenir les produits en attente de modération (Admin seulement)
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste des produits en attente
+ *       403:
+ *         description: Accès non autorisé
+ */
+router.get('/pending', authenticateToken, ProductController.getPendingProducts);
+
+/**
+ * @swagger
+ * /products/{id}/approve:
+ *   put:
+ *     summary: Approuver un produit (Admin seulement)
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Produit approuvé
+ *       403:
+ *         description: Accès non autorisé
+ *       404:
+ *         description: Produit non trouvé
+ */
+router.put('/:id/approve', authenticateToken, ProductController.approveProduct);
+
+/**
+ * @swagger
+ * /products/{id}/reject:
+ *   put:
+ *     summary: Rejeter un produit (Admin seulement)
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Produit rejeté
+ *       403:
+ *         description: Accès non autorisé
+ *       404:
+ *         description: Produit non trouvé
+ */
+router.put('/:id/reject', authenticateToken, ProductController.rejectProduct);
+
+/**
+ * @swagger
  * /products/{id}/renew:
  *   post:
  *     summary: Renouveler un produit (7 jours supplémentaires)
@@ -216,19 +280,41 @@ router.post('/:id/renew', authenticateToken, ProductController.renewProduct);
 router.get('/renewable', authenticateToken, ProductController.getRenewableProducts);
 
 /**
- * @swagger
- * /products/auto-expire:
- *   post:
- *     summary: Expirer automatiquement les produits (Admin seulement)
- *     tags: [Products]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Produits expirés
- *       403:
- *         description: Accès non autorisé
- */
+  * @swagger
+  * /products/{id}/like:
+  *   post:
+  *     summary: Aimer ou ne plus aimer un produit
+  *     tags: [Products]
+  *     security:
+  *       - bearerAuth: []
+  *     parameters:
+  *       - in: path
+  *         name: id
+  *         required: true
+  *         schema:
+  *           type: string
+  *     responses:
+  *       200:
+  *         description: Like toggled successfully
+  *       404:
+  *         description: Produit non trouvé
+  */
+router.post('/:id/like', authenticateToken, ProductController.toggleLike);
+
+/**
+  * @swagger
+  * /products/auto-expire:
+  *   post:
+  *     summary: Expirer automatiquement les produits (Admin seulement)
+  *     tags: [Products]
+  *     security:
+  *       - bearerAuth: []
+  *     responses:
+  *       200:
+  *         description: Produits expirés
+  *       403:
+  *         description: Accès non autorisé
+  */
 router.post('/auto-expire', authenticateToken, ProductController.autoExpireProducts);
 
 export default router;

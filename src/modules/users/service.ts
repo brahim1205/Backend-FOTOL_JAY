@@ -5,7 +5,6 @@ import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { v2 as cloudinary } from 'cloudinary';
 import prisma from '../../prisma';
-import { User } from '../../prisma';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -50,7 +49,7 @@ export const avatarUpload = multer({
 });
 
 export class UserService {
-  static async getUserById(id: string): Promise<User | null> {
+  static async getUserById(id: string): Promise<any> {
     return (prisma as any).user.findUnique({
       where: { id },
       select: {
@@ -80,7 +79,7 @@ export class UserService {
     lastName?: string;
     phone?: string;
     location?: string;
-  }): Promise<User> {
+  }): Promise<any> {
     return (prisma as any).user.update({
       where: { id: userId },
       data: updateData,

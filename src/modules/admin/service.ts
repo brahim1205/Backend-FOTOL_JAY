@@ -1,4 +1,5 @@
-import prisma from '../../prisma';
+import { PrismaClient } from '../../prisma';
+const prisma = new PrismaClient();
 import { NotificationService } from '../notifications/service';
 
 export interface AdminStats {
@@ -22,66 +23,71 @@ export class AdminService {
     const startDate = filters?.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
     const endDate = filters?.endDate || new Date();
 
-    // Users stats
-    const totalUsers = await (prisma as any).user.count();
-    const activeUsers = await (prisma as any).user.count({
-      where: {
-        lastLogin: {
-          gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Active in last 7 days
+    try {
+      // Users stats
+      const totalUsers = await (prisma as any).user.count();
+      const activeUsers = await (prisma as any).user.count({
+        where: {
+          lastLogin: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Active in last 7 days
+          },
         },
-      },
-    });
+      });
 
-    // Products stats
-    const totalProducts = await (prisma as any).product.count();
-    const approvedProducts = await (prisma as any).product.count({
-      where: { status: 'APPROVED' },
-    });
-    const pendingProducts = await (prisma as any).product.count({
-      where: { status: 'PENDING' },
-    });
-    const rejectedProducts = await (prisma as any).product.count({
-      where: { status: 'REJECTED' },
-    });
-    const soldProducts = await (prisma as any).product.count({
-      where: { status: 'SOLD' },
-    });
+      // Products stats
+      const totalProducts = await (prisma as any).product.count();
+      const approvedProducts = await (prisma as any).product.count({
+        where: { status: 'APPROVED' },
+      });
+      const pendingProducts = await (prisma as any).product.count({
+        where: { status: 'PENDING' },
+      });
+      const rejectedProducts = await (prisma as any).product.count({
+        where: { status: 'REJECTED' },
+      });
+      const soldProducts = await (prisma as any).product.count({
+        where: { status: 'SOLD' },
+      });
 
-    // Revenue (simplified - you'd calculate from actual sales)
-    const totalRevenue = soldProducts * 50; // Assuming average sale price
+      // Revenue (simplified - you'd calculate from actual sales)
+      const totalRevenue = soldProducts * 50; // Assuming average sale price
 
-    // Recent activity
-    const recentSignups = await (prisma as any).user.count({
-      where: {
-        registrationDate: {
-          gte: startDate,
-          lte: endDate,
+      // Recent activity
+      const recentSignups = await (prisma as any).user.count({
+        where: {
+          registrationDate: {
+            gte: startDate,
+            lte: endDate,
+          },
         },
-      },
-    });
+      });
 
-    const recentSales = await (prisma as any).product.count({
-      where: {
-        status: 'SOLD',
-        publishDate: {
-          gte: startDate,
-          lte: endDate,
+      const recentSales = await (prisma as any).product.count({
+        where: {
+          status: 'SOLD',
+          publishDate: {
+            gte: startDate,
+            lte: endDate,
+          },
         },
-      },
-    });
+      });
 
-    return {
-      totalUsers,
-      activeUsers,
-      totalProducts,
-      approvedProducts,
-      pendingProducts,
-      rejectedProducts,
-      soldProducts,
-      totalRevenue,
-      recentSignups,
-      recentSales,
-    };
+      return {
+        totalUsers,
+        activeUsers,
+        totalProducts,
+        approvedProducts,
+        pendingProducts,
+        rejectedProducts,
+        soldProducts,
+        totalRevenue,
+        recentSignups,
+        recentSales,
+      };
+    } catch (error) {
+      console.error('Erreur dans getDashboardStats:', error);
+      throw error;
+    }
   }
 
   static async getPendingProducts(limit: number = 50, offset: number = 0): Promise<any[]> {
